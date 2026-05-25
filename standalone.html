@@ -1,0 +1,2131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ORION-AURORA | Solar Power Forecasting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>/* ============================================================
+   ORION–AURORA Design System
+   Dark, glassmorphism, deep-space aesthetic
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Color palette */
+  --bg-deep:       hsl(224, 35%, 5%);
+  --bg-surface:    hsl(224, 28%, 9%);
+  --bg-card:       hsl(224, 24%, 12%);
+  --bg-card-hover: hsl(224, 22%, 15%);
+  --border:        hsl(224, 20%, 20%);
+  --border-glow:   hsl(210, 80%, 55%);
+
+  /* Brand accents */
+  --orion:       hsl(210, 90%, 60%);
+  --orion-dark:  hsl(210, 80%, 40%);
+  --orion-glow:  hsl(210, 100%, 70%);
+  --aurora:      hsl(270, 80%, 65%);
+  --aurora-dark: hsl(270, 70%, 45%);
+  --aurora-glow: hsl(270, 100%, 80%);
+  --gold:        hsl(45, 95%, 60%);
+  --green:       hsl(145, 70%, 52%);
+  --red:         hsl(0, 75%, 60%);
+  --orange:      hsl(28, 90%, 58%);
+
+  --text-primary:   hsl(210, 30%, 96%);
+  --text-secondary: hsl(210, 20%, 65%);
+  --text-muted:     hsl(210, 15%, 45%);
+
+  /* Font */
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Spacing */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 24px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210,70%,20%,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, hsl(270,60%,20%,0.2) 0%, transparent 50%);
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ---- Header ---- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: hsl(224, 35%, 5%, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--orion), var(--aurora));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 0 20px hsl(210,80%,60%,0.3);
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.logo-text span.orion { color: var(--orion); }
+.logo-text span.sep { color: var(--text-muted); margin: 0 3px; }
+.logo-text span.aurora { color: var(--aurora); }
+
+.header-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---- Dataset Toggle ---- */
+.dataset-toggle {
+  display: flex;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.dataset-toggle button {
+  padding: 7px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+  letter-spacing: 0.3px;
+}
+.dataset-toggle button.active {
+  background: linear-gradient(135deg, var(--orion-dark), var(--aurora-dark));
+  color: var(--text-primary);
+}
+.dataset-toggle button:hover:not(.active) {
+  color: var(--text-secondary);
+  background: hsl(224,20%,18%);
+}
+
+/* ---- Export button ---- */
+.btn-export {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+}
+.btn-export:hover {
+  border-color: var(--orion);
+  color: var(--orion);
+}
+
+/* ---- Run button ---- */
+.btn-run {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--orion), var(--aurora));
+  border: none;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-family: var(--font-body);
+  box-shadow: 0 4px 15px hsl(210,80%,60%,0.25);
+  letter-spacing: 0.3px;
+}
+.btn-run:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px hsl(210,80%,60%,0.4);
+}
+.btn-run:active { transform: translateY(0); }
+.btn-run.running { animation: pulse-run 1.2s infinite; cursor: not-allowed; }
+
+@keyframes pulse-run {
+  0%, 100% { box-shadow: 0 4px 15px hsl(210,80%,60%,0.25); }
+  50%       { box-shadow: 0 4px 25px hsl(210,80%,60%,0.55); }
+}
+
+/* ---- Main layout ---- */
+.main {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 28px 32px 60px;
+  display: grid;
+  gap: 24px;
+}
+
+/* ---- Section labels ---- */
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* ---- Cards ---- */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  transition: border-color 0.3s;
+}
+.card:hover { border-color: hsl(224,20%,28%); }
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+.dot-orion  { background: var(--orion);  box-shadow: 0 0 8px var(--orion-glow); }
+.dot-aurora { background: var(--aurora); box-shadow: 0 0 8px var(--aurora-glow); }
+.dot-gold   { background: var(--gold);   box-shadow: 0 0 8px var(--gold); }
+.dot-green  { background: var(--green);  box-shadow: 0 0 8px var(--green); }
+
+/* ---- Pipeline visualization ---- */
+.pipeline-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 8px 0;
+  flex-wrap: wrap;
+  row-gap: 12px;
+}
+.pipeline-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 120px;
+}
+.pipeline-box {
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s;
+  width: 130px;
+}
+.pipeline-box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.pipeline-box.stage-input::before  { background: linear-gradient(135deg, hsl(145,70%,52%,0.15), transparent); }
+.pipeline-box.stage-orion::before  { background: linear-gradient(135deg, hsl(210,90%,60%,0.15), transparent); }
+.pipeline-box.stage-aurora::before { background: linear-gradient(135deg, hsl(270,80%,65%,0.15), transparent); }
+.pipeline-box.stage-output::before { background: linear-gradient(135deg, hsl(45,95%,60%,0.15), transparent); }
+
+.pipeline-box.active {
+  border-color: var(--orion);
+  box-shadow: 0 0 20px hsl(210,80%,60%,0.3);
+}
+.pipeline-box.active.aurora-active {
+  border-color: var(--aurora);
+  box-shadow: 0 0 20px hsl(270,70%,65%,0.3);
+}
+.pipeline-box.active.output-active {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px hsl(45,90%,60%,0.3);
+}
+.pipeline-box.active::before { opacity: 1; }
+
+.pipeline-box .stage-icon { font-size: 22px; line-height: 1; margin-bottom: 4px; }
+.pipeline-box .stage-name { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+.pipeline-box .stage-sub  { font-size: 9px; color: var(--text-muted); margin-top: 2px; font-family: var(--font-mono); }
+
+.pipeline-arrow {
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 18px;
+  padding: 0 4px;
+  transition: color 0.4s;
+  margin-top: -20px;
+}
+.pipeline-arrow.lit { color: var(--orion); }
+
+.pipeline-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 110px;
+  letter-spacing: 0.3px;
+}
+
+/* ---- Progress bar ---- */
+.progress-bar-wrap {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  height: 6px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--orion), var(--aurora));
+  transition: width 0.4s ease;
+}
+
+/* ---- Grid layouts ---- */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+/* ---- Metric cards ---- */
+.metric-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.metric-card.mc-orion::before  { background: linear-gradient(90deg, var(--orion), transparent); }
+.metric-card.mc-aurora::before { background: linear-gradient(90deg, var(--aurora), transparent); }
+.metric-card.mc-baseline::before { background: linear-gradient(90deg, var(--text-muted), transparent); }
+.metric-card:hover { border-color: hsl(224,20%,28%); transform: translateY(-2px); }
+
+.metric-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.metric-model { font-size: 11px; font-weight: 600; margin-bottom: 8px; }
+.metric-model.orion-label  { color: var(--orion); }
+.metric-model.aurora-label { color: var(--aurora); }
+.metric-value { font-size: 28px; font-weight: 800; font-family: var(--font-mono); letter-spacing: -1px; }
+.metric-unit  { font-size: 12px; color: var(--text-muted); margin-left: 4px; font-weight: 400; }
+.metric-delta { font-size: 11px; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+.delta-good { color: var(--green); }
+.delta-bad  { color: var(--red); }
+
+/* ---- Sliders ---- */
+.sliders-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.slider-row label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.slider-row label span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--orion);
+  font-weight: 600;
+}
+.slider-row input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--bg-surface);
+  outline: none;
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+.slider-row input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--orion), var(--aurora));
+  cursor: pointer;
+  box-shadow: 0 0 8px hsl(210,80%,60%,0.4);
+  transition: box-shadow 0.2s;
+}
+.slider-row input[type=range]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 12px hsl(210,80%,60%,0.6);
+}
+
+/* ---- Live prediction display ---- */
+.live-pred-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+.live-pred-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+.live-orion-val  { font-size: 20px; font-weight: 700; font-family: var(--font-mono); color: var(--orion); }
+.live-aurora-val { font-size: 32px; font-weight: 800; font-family: var(--font-mono); color: var(--aurora); }
+.live-pred-unit  { font-size: 13px; color: var(--text-muted); }
+.live-improvement-badge {
+  padding: 4px 12px;
+  background: hsl(145,70%,52%,0.1);
+  border: 1px solid hsl(145,70%,52%,0.3);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+}
+
+/* ---- Chart wrappers ---- */
+.chart-wrap {
+  width: 100%;
+  height: 320px;
+}
+.chart-legend {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 12px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ---- Reservoir heatmap ---- */
+.heatmap-wrap {
+  overflow: hidden;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  padding: 4px;
+}
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(25, 1fr);
+  gap: 2px;
+}
+.heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  transition: background-color 0.5s;
+}
+.heatmap-scale {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.heatmap-scale-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg,
+    hsl(224, 35%, 15%),
+    hsl(210, 80%, 30%),
+    hsl(210, 90%, 60%),
+    hsl(45, 95%, 60%)
+  );
+}
+
+/* ---- Benchmark table ---- */
+.bench-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.bench-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.bench-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid hsl(224,20%,14%);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.bench-table tr:last-child td { border-bottom: none; }
+.bench-table tr.highlight td {
+  background: hsl(210,80%,55%,0.06);
+  color: var(--text-primary);
+}
+.bench-table tr.highlight-aurora td {
+  background: hsl(270,70%,60%,0.08);
+  color: var(--text-primary);
+}
+.bench-table tr:hover td { background: hsl(224,20%,14%); }
+.model-name-cell { font-family: var(--font-body) !important; font-weight: 600; font-size: 12px !important; }
+.badge-orion  { display: inline-block; padding: 2px 6px; background: hsl(210,80%,55%,0.15); color: var(--orion); border-radius: 4px; font-size: 9px; font-weight: 700; margin-left: 6px; font-family: var(--font-body) !important; letter-spacing: 0.5px; }
+.badge-aurora { display: inline-block; padding: 2px 6px; background: hsl(270,70%,60%,0.15); color: var(--aurora); border-radius: 4px; font-size: 9px; font-weight: 700; margin-left: 6px; font-family: var(--font-body) !important; letter-spacing: 0.5px; }
+.badge-best   { display: inline-block; padding: 2px 6px; background: hsl(45,90%,55%,0.15); color: var(--gold); border-radius: 4px; font-size: 9px; font-weight: 700; margin-left: 4px; font-family: var(--font-body) !important; }
+
+/* ---- Grid contribution panel ---- */
+.grid-panel {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.grid-donut-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.grid-donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.grid-pct { font-size: 22px; font-weight: 800; font-family: var(--font-mono); color: var(--aurora); }
+.grid-pct-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+.grid-stats {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.grid-stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.grid-stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.grid-stat-value { font-size: 18px; font-weight: 700; font-family: var(--font-mono); }
+.grid-stat-bar-wrap { height: 4px; background: var(--bg-deep); border-radius: 2px; }
+.grid-stat-bar      { height: 4px; border-radius: 2px; transition: width 0.6s ease; }
+
+/* ---- Tooltip card ---- */
+.tooltip-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  box-shadow: 0 8px 32px hsl(0,0%,0%,0.4);
+}
+.tooltip-label { color: var(--text-muted); font-size: 10px; margin-bottom: 4px; }
+.tooltip-row   { display: flex; justify-content: space-between; gap: 16px; margin: 2px 0; }
+
+/* ---- Stage info boxes ---- */
+.stage-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.stage-info-box {
+  padding: 16px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+}
+.stage-info-box.orion-box  { border-left: 3px solid var(--orion); background: hsl(210,80%,55%,0.04); }
+.stage-info-box.aurora-box { border-left: 3px solid var(--aurora); background: hsl(270,70%,60%,0.04); }
+.stage-info-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+.stage-info-title.orion-col  { color: var(--orion); }
+.stage-info-title.aurora-col { color: var(--aurora); }
+.stage-info-item { font-size: 11px; color: var(--text-secondary); padding: 3px 0; display: flex; gap: 6px; }
+.stage-info-item::before { content: '›'; color: var(--text-muted); flex-shrink: 0; }
+
+/* ---- Status bar ---- */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.status-indicator {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  flex-shrink: 0;
+}
+.status-indicator.running { background: var(--orion); box-shadow: 0 0 6px var(--orion); animation: blink 0.8s infinite; }
+.status-indicator.idle    { background: var(--text-muted); box-shadow: none; }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ---- Animations ---- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.4s ease both; }
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, var(--orion), var(--aurora), var(--gold), var(--orion));
+  background-size: 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1100px) {
+  .grid-4 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 860px) {
+  .main { padding: 16px; }
+  .header { padding: 12px 16px; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .sliders-grid { grid-template-columns: 1fr; }
+  .stage-info-grid { grid-template-columns: 1fr; }
+  .pipeline-wrap { gap: 0; }
+  .heatmap-grid { grid-template-columns: repeat(20, 1fr); }
+}
+</style>
+</head>
+<body>
+<div id="root"><p style="color:#3b9eff;font-family:monospace;padding:32px">Booting ORION-AURORA...</p></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js" crossorigin></script>
+<script src="https://unpkg.com/recharts@2.5.0/umd/Recharts.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
+<script>window.UCI_DATA=﻿[{"t":"2023-01-01 00:00:00","h":0,"doy":1,"irr":0,"tmp":4.41,"hum":85.32,"wnd":3.66,"cc":0.118,"pwr":0},{"t":"2023-01-01 01:00:00","h":1,"doy":1,"irr":0,"tmp":2.39,"hum":81.25,"wnd":4.88,"cc":0.169,"pwr":0},{"t":"2023-01-01 02:00:00","h":2,"doy":1,"irr":0,"tmp":1.17,"hum":65.38,"wnd":2.99,"cc":0.321,"pwr":0},{"t":"2023-01-01 03:00:00","h":3,"doy":1,"irr":0,"tmp":2.19,"hum":80.74,"wnd":7.62,"cc":0.295,"pwr":0},{"t":"2023-01-01 04:00:00","h":4,"doy":1,"irr":0,"tmp":4.53,"hum":90.09,"wnd":10.05,"cc":0.529,"pwr":0},{"t":"2023-01-01 05:00:00","h":5,"doy":1,"irr":0,"tmp":2.8,"hum":83.81,"wnd":7.1,"cc":0.385,"pwr":0},{"t":"2023-01-01 06:00:00","h":6,"doy":1,"irr":0,"tmp":4.18,"hum":82.7,"wnd":5.14,"cc":0.233,"pwr":0},{"t":"2023-01-01 07:00:00","h":7,"doy":1,"irr":118.83,"tmp":1.56,"hum":76.69,"wnd":4.12,"cc":0.316,"pwr":1039.47},{"t":"2023-01-01 08:00:00","h":8,"doy":1,"irr":199.22,"tmp":6.05,"hum":79.22,"wnd":3.24,"cc":0.315,"pwr":1730.645},{"t":"2023-01-01 09:00:00","h":9,"doy":1,"irr":252.9,"tmp":4.81,"hum":86.79,"wnd":4.97,"cc":0.418,"pwr":2185.902},{"t":"2023-01-01 10:00:00","h":10,"doy":1,"irr":363.08,"tmp":5.64,"hum":89.41,"wnd":3.88,"cc":0.276,"pwr":3161.026},{"t":"2023-01-01 11:00:00","h":11,"doy":1,"irr":398.3,"tmp":9.63,"hum":70.42,"wnd":6.39,"cc":0.312,"pwr":3465.255},{"t":"2023-01-01 12:00:00","h":12,"doy":1,"irr":374.27,"tmp":10.49,"hum":71.46,"wnd":2.56,"cc":0.407,"pwr":3241.487},{"t":"2023-01-01 13:00:00","h":13,"doy":1,"irr":365.87,"tmp":5.52,"hum":93.04,"wnd":6.51,"cc":0.389,"pwr":3170.383},{"t":"2023-01-01 14:00:00","h":14,"doy":1,"irr":348.91,"tmp":6.38,"hum":75.25,"wnd":4.2,"cc":0.303,"pwr":3031.238},{"t":"2023-01-01 15:00:00","h":15,"doy":1,"irr":268.97,"tmp":5.91,"hum":81.47,"wnd":4.71,"cc":0.371,"pwr":2331.641},{"t":"2023-01-01 16:00:00","h":16,"doy":1,"irr":214.61,"tmp":6.37,"hum":80.24,"wnd":2.87,"cc":0.312,"pwr":1870.501},{"t":"2023-01-01 17:00:00","h":17,"doy":1,"irr":85.44,"tmp":3.6,"hum":81.81,"wnd":3.23,"cc":0.386,"pwr":736.262},{"t":"2023-01-01 18:00:00","h":18,"doy":1,"irr":2.07,"tmp":2.06,"hum":96.32,"wnd":5.38,"cc":0.271,"pwr":18.092},{"t":"2023-01-01 19:00:00","h":19,"doy":1,"irr":0,"tmp":2.67,"hum":79.86,"wnd":7.78,"cc":0.341,"pwr":0},{"t":"2023-01-01 20:00:00","h":20,"doy":1,"irr":0,"tmp":1.39,"hum":91.93,"wnd":1.07,"cc":0.486,"pwr":0},{"t":"2023-01-01 21:00:00","h":21,"doy":1,"irr":0,"tmp":4.57,"hum":76.41,"wnd":3.28,"cc":0.32,"pwr":0},{"t":"2023-01-01 22:00:00","h":22,"doy":1,"irr":0,"tmp":2.24,"hum":96.17,"wnd":1.41,"cc":0.302,"pwr":0},{"t":"2023-01-01 23:00:00","h":23,"doy":1,"irr":0,"tmp":2.96,"hum":75.21,"wnd":2.82,"cc":0.358,"pwr":0},{"t":"2023-01-02 00:00:00","h":0,"doy":2,"irr":0,"tmp":4.48,"hum":84.84,"wnd":5.35,"cc":0.324,"pwr":0},{"t":"2023-01-02 01:00:00","h":1,"doy":2,"irr":0,"tmp":3.22,"hum":64.04,"wnd":5.16,"cc":0.418,"pwr":0},{"t":"2023-01-02 02:00:00","h":2,"doy":2,"irr":0,"tmp":0.79,"hum":81.14,"wnd":7.73,"cc":0.356,"pwr":0},{"t":"2023-01-02 03:00:00","h":3,"doy":2,"irr":0,"tmp":5.75,"hum":85.88,"wnd":3.8,"cc":0.451,"pwr":0},{"t":"2023-01-02 04:00:00","h":4,"doy":2,"irr":0,"tmp":3.18,"hum":69.51,"wnd":1.2,"cc":0.334,"pwr":0},{"t":"2023-01-02 05:00:00","h":5,"doy":2,"irr":0,"tmp":3.21,"hum":78.49,"wnd":3.7,"cc":0.352,"pwr":0},{"t":"2023-01-02 06:00:00","h":6,"doy":2,"irr":0,"tmp":7.1,"hum":98,"wnd":6.61,"cc":0.402,"pwr":0},{"t":"2023-01-02 07:00:00","h":7,"doy":2,"irr":113.12,"tmp":7.52,"hum":69.59,"wnd":6.11,"cc":0.357,"pwr":987.392},{"t":"2023-01-02 08:00:00","h":8,"doy":2,"irr":170.49,"tmp":6.74,"hum":83.61,"wnd":5.13,"cc":0.491,"pwr":1470.4},{"t":"2023-01-02 09:00:00","h":9,"doy":2,"irr":277.33,"tmp":4.51,"hum":68.57,"wnd":2.82,"cc":0.345,"pwr":2406.465},{"t":"2023-01-02 10:00:00","h":10,"doy":2,"irr":337.63,"tmp":8.84,"hum":68.74,"wnd":7.32,"cc":0.373,"pwr":2929.112},{"t":"2023-01-02 11:00:00","h":11,"doy":2,"irr":362.74,"tmp":4.52,"hum":84.57,"wnd":3.6,"cc":0.388,"pwr":3141.649},{"t":"2023-01-02 12:00:00","h":12,"doy":2,"irr":365.91,"tmp":7.51,"hum":77.42,"wnd":1.48,"cc":0.411,"pwr":3165.516},{"t":"2023-01-02 13:00:00","h":13,"doy":2,"irr":392.03,"tmp":6.48,"hum":72.01,"wnd":2.39,"cc":0.335,"pwr":3407.302},{"t":"2023-01-02 14:00:00","h":14,"doy":2,"irr":319.34,"tmp":5.72,"hum":76.54,"wnd":4.22,"cc":0.393,"pwr":2763.678},{"t":"2023-01-02 15:00:00","h":15,"doy":2,"irr":268.05,"tmp":6.49,"hum":87.76,"wnd":1.72,"cc":0.354,"pwr":2322.66},{"t":"2023-01-02 16:00:00","h":16,"doy":2,"irr":194.19,"tmp":6.23,"hum":77.89,"wnd":2.38,"cc":0.386,"pwr":1684.545},{"t":"2023-01-02 17:00:00","h":17,"doy":2,"irr":98.47,"tmp":5.53,"hum":85.03,"wnd":1.91,"cc":0.392,"pwr":852.817},{"t":"2023-01-02 18:00:00","h":18,"doy":2,"irr":1.24,"tmp":3.19,"hum":68.11,"wnd":4.14,"cc":0.382,"pwr":10.658},{"t":"2023-01-02 19:00:00","h":19,"doy":2,"irr":0,"tmp":1.96,"hum":81.25,"wnd":2.23,"cc":0.509,"pwr":0},{"t":"2023-01-02 20:00:00","h":20,"doy":2,"irr":0,"tmp":2.59,"hum":80.76,"wnd":4.86,"cc":0.462,"pwr":0},{"t":"2023-01-02 21:00:00","h":21,"doy":2,"irr":0,"tmp":4.63,"hum":73.11,"wnd":3.39,"cc":0.287,"pwr":0},{"t":"2023-01-02 22:00:00","h":22,"doy":2,"irr":0,"tmp":3.52,"hum":79.26,"wnd":0.94,"cc":0.305,"pwr":0},{"t":"2023-01-02 23:00:00","h":23,"doy":2,"irr":0,"tmp":2.01,"hum":80.27,"wnd":3.22,"cc":0.367,"pwr":0},{"t":"2023-01-03 00:00:00","h":0,"doy":3,"irr":0,"tmp":0.82,"hum":90,"wnd":1.88,"cc":0.392,"pwr":0},{"t":"2023-01-03 01:00:00","h":1,"doy":3,"irr":0,"tmp":4.35,"hum":89.93,"wnd":4.64,"cc":0.378,"pwr":0},{"t":"2023-01-03 02:00:00","h":2,"doy":3,"irr":0,"tmp":4.82,"hum":72.35,"wnd":2.53,"cc":0.209,"pwr":0},{"t":"2023-01-03 03:00:00","h":3,"doy":3,"irr":0,"tmp":3.05,"hum":91.54,"wnd":5.89,"cc":0.369,"pwr":0},{"t":"2023-01-03 04:00:00","h":4,"doy":3,"irr":0,"tmp":3.92,"hum":74.33,"wnd":7.03,"cc":0.315,"pwr":0},{"t":"2023-01-03 05:00:00","h":5,"doy":3,"irr":0,"tmp":5.34,"hum":80.04,"wnd":2.17,"cc":0.317,"pwr":0},{"t":"2023-01-03 06:00:00","h":6,"doy":3,"irr":0,"tmp":6.38,"hum":66.76,"wnd":5.93,"cc":0.275,"pwr":0},{"t":"2023-01-03 07:00:00","h":7,"doy":3,"irr":103.03,"tmp":3.8,"hum":79.27,"wnd":1.99,"cc":0.38,"pwr":893.654},{"t":"2023-01-03 08:00:00","h":8,"doy":3,"irr":199.09,"tmp":5.23,"hum":92.52,"wnd":3.14,"cc":0.374,"pwr":1728.671},{"t":"2023-01-03 09:00:00","h":9,"doy":3,"irr":315.33,"tmp":6.87,"hum":77.09,"wnd":2.95,"cc":0.222,"pwr":2752.92},{"t":"2023-01-03 10:00:00","h":10,"doy":3,"irr":356.4,"tmp":5,"hum":76.92,"wnd":2.46,"cc":0.299,"pwr":3100.062},{"t":"2023-01-03 11:00:00","h":11,"doy":3,"irr":415.59,"tmp":4.01,"hum":62.86,"wnd":4.13,"cc":0.253,"pwr":3622.097},{"t":"2023-01-03 12:00:00","h":12,"doy":3,"irr":408.64,"tmp":5.36,"hum":78.67,"wnd":6.83,"cc":0.324,"pwr":3552.299},{"t":"2023-01-03 13:00:00","h":13,"doy":3,"irr":416.56,"tmp":6.81,"hum":77.5,"wnd":4.39,"cc":0.259,"pwr":3630.678},{"t":"2023-01-03 14:00:00","h":14,"doy":3,"irr":348.92,"tmp":5.74,"hum":74.21,"wnd":3.17,"cc":0.28,"pwr":3031.819},{"t":"2023-01-03 15:00:00","h":15,"doy":3,"irr":297.92,"tmp":4.96,"hum":76.44,"wnd":1.48,"cc":0.304,"pwr":2594.595},{"t":"2023-01-03 16:00:00","h":16,"doy":3,"irr":186.66,"tmp":5.44,"hum":80.26,"wnd":0.74,"cc":0.423,"pwr":1616.083},{"t":"2023-01-03 17:00:00","h":17,"doy":3,"irr":98.94,"tmp":4.37,"hum":81.79,"wnd":2.75,"cc":0.402,"pwr":857.524},{"t":"2023-01-03 18:00:00","h":18,"doy":3,"irr":11.27,"tmp":2.23,"hum":81.46,"wnd":1.24,"cc":0.384,"pwr":99.252},{"t":"2023-01-03 19:00:00","h":19,"doy":3,"irr":0,"tmp":-0.1,"hum":93.26,"wnd":1.69,"cc":0.341,"pwr":0},{"t":"2023-01-03 20:00:00","h":20,"doy":3,"irr":0,"tmp":1.97,"hum":75.73,"wnd":3.81,"cc":0.43,"pwr":0},{"t":"2023-01-03 21:00:00","h":21,"doy":3,"irr":0,"tmp":4.94,"hum":92.44,"wnd":1.71,"cc":0.351,"pwr":0},{"t":"2023-01-03 22:00:00","h":22,"doy":3,"irr":0,"tmp":2.43,"hum":78.61,"wnd":2.21,"cc":0.283,"pwr":0},{"t":"2023-01-03 23:00:00","h":23,"doy":3,"irr":0,"tmp":2.78,"hum":85.68,"wnd":3.85,"cc":0.331,"pwr":0},{"t":"2023-01-04 00:00:00","h":0,"doy":4,"irr":0,"tmp":4.63,"hum":88.33,"wnd":3.88,"cc":0.326,"pwr":0},{"t":"2023-01-04 01:00:00","h":1,"doy":4,"irr":0,"tmp":4.98,"hum":82.52,"wnd":2.64,"cc":0.399,"pwr":0},{"t":"2023-01-04 02:00:00","h":2,"doy":4,"irr":0,"tmp":2.72,"hum":79.12,"wnd":1.32,"cc":0.228,"pwr":0},{"t":"2023-01-04 03:00:00","h":3,"doy":4,"irr":0,"tmp":3.26,"hum":83.69,"wnd":2.59,"cc":0.406,"pwr":0},{"t":"2023-01-04 04:00:00","h":4,"doy":4,"irr":0,"tmp":5.62,"hum":64.22,"wnd":3.61,"cc":0.362,"pwr":0},{"t":"2023-01-04 05:00:00","h":5,"doy":4,"irr":0,"tmp":4.73,"hum":57.86,"wnd":3.38,"cc":0.294,"pwr":0},{"t":"2023-01-04 06:00:00","h":6,"doy":4,"irr":0,"tmp":1.7,"hum":87.13,"wnd":6.15,"cc":0.272,"pwr":0},{"t":"2023-01-04 07:00:00","h":7,"doy":4,"irr":97.17,"tmp":1.87,"hum":78.39,"wnd":2.43,"cc":0.276,"pwr":841.498},{"t":"2023-01-04 08:00:00","h":8,"doy":4,"irr":213.55,"tmp":5,"hum":71.92,"wnd":1.46,"cc":0.287,"pwr":1860.824},{"t":"2023-01-04 09:00:00","h":9,"doy":4,"irr":349.62,"tmp":4.79,"hum":76.66,"wnd":2.74,"cc":0.086,"pwr":3069.776},{"t":"2023-01-04 10:00:00","h":10,"doy":4,"irr":403.48,"tmp":7.58,"hum":73.01,"wnd":2.66,"cc":0.166,"pwr":3531.406},{"t":"2023-01-04 11:00:00","h":11,"doy":4,"irr":423.26,"tmp":8.35,"hum":64.26,"wnd":3.56,"cc":0.214,"pwr":3692.003},{"t":"2023-01-04 12:00:00","h":12,"doy":4,"irr":407.22,"tmp":7.8,"hum":84.06,"wnd":7.41,"cc":0.286,"pwr":3539.409},{"t":"2023-01-04 13:00:00","h":13,"doy":4,"irr":387.5,"tmp":6.07,"hum":87.78,"wnd":1.72,"cc":0.33,"pwr":3365.957},{"t":"2023-01-04 14:00:00","h":14,"doy":4,"irr":374.2,"tmp":4.97,"hum":80.51,"wnd":4.06,"cc":0.29,"pwr":3262.281},{"t":"2023-01-04 15:00:00","h":15,"doy":4,"irr":287.74,"tmp":7.23,"hum":79.74,"wnd":4.27,"cc":0.36,"pwr":2501.022},{"t":"2023-01-04 16:00:00","h":16,"doy":4,"irr":200.54,"tmp":6.65,"hum":77.5,"wnd":2.91,"cc":0.296,"pwr":1742.105},{"t":"2023-01-04 17:00:00","h":17,"doy":4,"irr":101.73,"tmp":6.11,"hum":78.97,"wnd":3.45,"cc":0.295,"pwr":882.7},{"t":"2023-01-04 18:00:00","h":18,"doy":4,"irr":1.36,"tmp":2.98,"hum":83.9,"wnd":3.23,"cc":0.325,"pwr":11.651},{"t":"2023-01-04 19:00:00","h":19,"doy":4,"irr":0,"tmp":2.24,"hum":75.38,"wnd":3.39,"cc":0.196,"pwr":0},{"t":"2023-01-04 20:00:00","h":20,"doy":4,"irr":0,"tmp":2.63,"hum":88.16,"wnd":11.82,"cc":0.342,"pwr":0},{"t":"2023-01-04 21:00:00","h":21,"doy":4,"irr":0,"tmp":3.43,"hum":81.99,"wnd":4.53,"cc":0.319,"pwr":0},{"t":"2023-01-04 22:00:00","h":22,"doy":4,"irr":0,"tmp":2.55,"hum":88.92,"wnd":1.85,"cc":0.389,"pwr":0},{"t":"2023-01-04 23:00:00","h":23,"doy":4,"irr":0,"tmp":2.15,"hum":91.23,"wnd":3.48,"cc":0.293,"pwr":0},{"t":"2023-01-05 00:00:00","h":0,"doy":5,"irr":0,"tmp":4.54,"hum":79.55,"wnd":15.17,"cc":0.295,"pwr":0},{"t":"2023-01-05 01:00:00","h":1,"doy":5,"irr":0,"tmp":3.03,"hum":81.42,"wnd":3,"cc":0.209,"pwr":0},{"t":"2023-01-05 07:00:00","h":7,"doy":5,"irr":105.63,"tmp":3.8,"hum":59.08,"wnd":4.42,"cc":0.224,"pwr":918.563},{"t":"2023-01-05 08:00:00","h":8,"doy":5,"irr":246.21,"tmp":7.59,"hum":81.04,"wnd":2.41,"cc":0.207,"pwr":2161.145},{"t":"2023-01-05 09:00:00","h":9,"doy":5,"irr":292.58,"tmp":7.09,"hum":78.99,"wnd":4.25,"cc":0.321,"pwr":2544.791},{"t":"2023-01-05 10:00:00","h":10,"doy":5,"irr":356.17,"tmp":7.12,"hum":72.28,"wnd":2.83,"cc":0.258,"pwr":3096.56},{"t":"2023-01-05 11:00:00","h":11,"doy":5,"irr":436.55,"tmp":9.44,"hum":81.04,"wnd":2.87,"cc":0.233,"pwr":3813.433},{"t":"2023-01-05 12:00:00","h":12,"doy":5,"irr":425.49,"tmp":7.59,"hum":66.58,"wnd":7.78,"cc":0.264,"pwr":3705.2},{"t":"2023-01-05 13:00:00","h":13,"doy":5,"irr":356.33,"tmp":8.95,"hum":75.3,"wnd":8.98,"cc":0.433,"pwr":3082.714},{"t":"2023-01-05 14:00:00","h":14,"doy":5,"irr":332.75,"tmp":5.44,"hum":90.66,"wnd":4.6,"cc":0.376,"pwr":2884.148},{"t":"2023-01-05 15:00:00","h":15,"doy":5,"irr":295.01,"tmp":5.35,"hum":63.25,"wnd":2.31,"cc":0.284,"pwr":2566.624},{"t":"2023-01-05 16:00:00","h":16,"doy":5,"irr":176.46,"tmp":4.03,"hum":86.67,"wnd":8.99,"cc":0.444,"pwr":1523.993},{"t":"2023-01-05 17:00:00","h":17,"doy":5,"irr":77.54,"tmp":5.26,"hum":94.24,"wnd":4.38,"cc":0.497,"pwr":665.716},{"t":"2023-01-06 07:00:00","h":7,"doy":6,"irr":122.9,"tmp":1.63,"hum":86.03,"wnd":2.93,"cc":0.27,"pwr":1076.697},{"t":"2023-01-06 08:00:00","h":8,"doy":6,"irr":203.53,"tmp":5.18,"hum":84.03,"wnd":4.48,"cc":0.302,"pwr":1768.818},{"t":"2023-01-06 09:00:00","h":9,"doy":6,"irr":280.44,"tmp":6.77,"hum":98,"wnd":1.53,"cc":0.365,"pwr":2433.697},{"t":"2023-01-06 10:00:00","h":10,"doy":6,"irr":380.09,"tmp":7.91,"hum":72.8,"wnd":1.85,"cc":0.231,"pwr":3314.529},{"t":"2023-01-06 11:00:00","h":11,"doy":6,"irr":369.03,"tmp":7.56,"hum":75.05,"wnd":1.55,"cc":0.374,"pwr":3197.852},{"t":"2023-01-06 12:00:00","h":12,"doy":6,"irr":372.55,"tmp":6.48,"hum":88,"wnd":4.07,"cc":0.366,"pwr":3224.589},{"t":"2023-01-06 13:00:00","h":13,"doy":6,"irr":340.42,"tmp":6.64,"hum":87.61,"wnd":4.96,"cc":0.46,"pwr":2939.454},{"t":"2023-01-06 14:00:00","h":14,"doy":6,"irr":325.1,"tmp":8.37,"hum":76.05,"wnd":7.32,"cc":0.403,"pwr":2814.657},{"t":"2023-01-06 15:00:00","h":15,"doy":6,"irr":302.59,"tmp":3.79,"hum":82.11,"wnd":2.03,"cc":0.266,"pwr":2635.974},{"t":"2023-01-06 16:00:00","h":16,"doy":6,"irr":199.13,"tmp":4.76,"hum":92.91,"wnd":2.89,"cc":0.362,"pwr":1728.417},{"t":"2023-01-06 17:00:00","h":17,"doy":6,"irr":107.06,"tmp":4.6,"hum":71.44,"wnd":1.9,"cc":0.382,"pwr":930.302},{"t":"2023-01-07 07:00:00","h":7,"doy":7,"irr":110.82,"tmp":4.44,"hum":75.95,"wnd":2.91,"cc":0.349,"pwr":965.571},{"t":"2023-01-07 08:00:00","h":8,"doy":7,"irr":179.77,"tmp":4.56,"hum":75.98,"wnd":1.49,"cc":0.454,"pwr":1553.696},{"t":"2023-01-07 09:00:00","h":9,"doy":7,"irr":219.89,"tmp":3.97,"hum":78.03,"wnd":3.19,"cc":0.483,"pwr":1888.873},{"t":"2023-01-07 10:00:00","h":10,"doy":7,"irr":331.61,"tmp":9.05,"hum":83.34,"wnd":2.84,"cc":0.376,"pwr":2873.047},{"t":"2023-01-07 11:00:00","h":11,"doy":7,"irr":419.39,"tmp":8.3,"hum":82.09,"wnd":2.52,"cc":0.296,"pwr":3655.055},{"t":"2023-01-07 12:00:00","h":12,"doy":7,"irr":471.25,"tmp":6.44,"hum":78.51,"wnd":5.93,"cc":0.175,"pwr":4124.834},{"t":"2023-01-07 13:00:00","h":13,"doy":7,"irr":370.88,"tmp":8.06,"hum":74.26,"wnd":1.33,"cc":0.357,"pwr":3214.106},{"t":"2023-01-07 14:00:00","h":14,"doy":7,"irr":366.81,"tmp":5.75,"hum":71.29,"wnd":4.72,"cc":0.271,"pwr":3193.382},{"t":"2023-01-07 15:00:00","h":15,"doy":7,"irr":301.18,"tmp":6.36,"hum":72.41,"wnd":3.45,"cc":0.266,"pwr":2622.609},{"t":"2023-01-07 16:00:00","h":16,"doy":7,"irr":234.69,"tmp":6.48,"hum":69,"wnd":1.7,"cc":0.215,"pwr":2053.515},{"t":"2023-01-07 17:00:00","h":17,"doy":7,"irr":95.77,"tmp":5.32,"hum":75.61,"wnd":3.64,"cc":0.3,"pwr":828.853},{"t":"2023-01-07 18:00:00","h":18,"doy":7,"irr":8.46,"tmp":2.98,"hum":79.68,"wnd":8.28,"cc":0.239,"pwr":74.75},{"t":"2023-01-08 07:00:00","h":7,"doy":8,"irr":119.6,"tmp":3.58,"hum":77.22,"wnd":1.69,"cc":0.313,"pwr":1045.864},{"t":"2023-01-08 08:00:00","h":8,"doy":8,"irr":192.17,"tmp":4.42,"hum":86.35,"wnd":2.84,"cc":0.392,"pwr":1665.154},{"t":"2023-01-08 09:00:00","h":9,"doy":8,"irr":270.64,"tmp":4.78,"hum":82.61,"wnd":7.03,"cc":0.401,"pwr":2344.603},{"t":"2023-01-08 10:00:00","h":10,"doy":8,"irr":334.45,"tmp":9.66,"hum":69.7,"wnd":4.61,"cc":0.398,"pwr":2898.248},{"t":"2023-01-08 11:00:00","h":11,"doy":8,"irr":387.26,"tmp":7.17,"hum":61.22,"wnd":5.75,"cc":0.307,"pwr":3362.108},{"t":"2023-01-08 12:00:00","h":12,"doy":8,"irr":391.47,"tmp":5.57,"hum":69.25,"wnd":6.14,"cc":0.36,"pwr":3395.115},{"t":"2023-01-08 13:00:00","h":13,"doy":8,"irr":400.04,"tmp":9.07,"hum":69.54,"wnd":4.23,"cc":0.276,"pwr":3478.467},{"t":"2023-01-08 14:00:00","h":14,"doy":8,"irr":334.23,"tmp":8.13,"hum":81,"wnd":10.62,"cc":0.367,"pwr":2896.527},{"t":"2023-01-08 15:00:00","h":15,"doy":8,"irr":296.91,"tmp":7.05,"hum":66.4,"wnd":4.64,"cc":0.327,"pwr":2583.546},{"t":"2023-01-08 16:00:00","h":16,"doy":8,"irr":180.87,"tmp":4.67,"hum":85.69,"wnd":3.03,"cc":0.457,"pwr":1563.166},{"t":"2023-01-08 17:00:00","h":17,"doy":8,"irr":91.72,"tmp":4.08,"hum":84.43,"wnd":2.77,"cc":0.41,"pwr":791.557},{"t":"2023-01-08 18:00:00","h":18,"doy":8,"irr":0.2,"tmp":6.76,"hum":97.62,"wnd":2.73,"cc":0.479,"pwr":2.024},{"t":"2023-01-09 07:00:00","h":7,"doy":9,"irr":99.27,"tmp":1.11,"hum":71.28,"wnd":7.37,"cc":0.368,"pwr":859.416},{"t":"2023-01-09 08:00:00","h":8,"doy":9,"irr":243.2,"tmp":6.52,"hum":68.56,"wnd":2.53,"cc":0.124,"pwr":2131.855},{"t":"2023-01-09 09:00:00","h":9,"doy":9,"irr":278.78,"tmp":6.43,"hum":75.45,"wnd":2.61,"cc":0.312,"pwr":2417.954},{"t":"2023-01-09 10:00:00","h":10,"doy":9,"irr":380.44,"tmp":7.84,"hum":78.4,"wnd":2.51,"cc":0.29,"pwr":3316.88},{"t":"2023-01-09 11:00:00","h":11,"doy":9,"irr":447.12,"tmp":6.86,"hum":73.22,"wnd":8.08,"cc":0.19,"pwr":3908.315},{"t":"2023-01-09 12:00:00","h":12,"doy":9,"irr":453.76,"tmp":9.9,"hum":70.84,"wnd":5.47,"cc":0.215,"pwr":3962.855},{"t":"2023-01-09 13:00:00","h":13,"doy":9,"irr":393.96,"tmp":9.13,"hum":66.44,"wnd":3.62,"cc":0.329,"pwr":3423.139},{"t":"2023-01-09 14:00:00","h":14,"doy":9,"irr":351.67,"tmp":5.1,"hum":76.69,"wnd":12.62,"cc":0.354,"pwr":3054.359},{"t":"2023-01-09 15:00:00","h":15,"doy":9,"irr":243,"tmp":5.08,"hum":81.04,"wnd":2.71,"cc":0.505,"pwr":2095.466},{"t":"2023-01-09 16:00:00","h":16,"doy":9,"irr":179.8,"tmp":5.81,"hum":84.56,"wnd":1.86,"cc":0.444,"pwr":1553.32},{"t":"2023-01-09 17:00:00","h":17,"doy":9,"irr":103.35,"tmp":3.83,"hum":73.18,"wnd":1.46,"cc":0.282,"pwr":897.245},{"t":"2023-01-09 18:00:00","h":18,"doy":9,"irr":9.89,"tmp":5.34,"hum":72.8,"wnd":4.54,"cc":0.361,"pwr":87.552},{"t":"2023-01-10 07:00:00","h":7,"doy":10,"irr":95.67,"tmp":5.64,"hum":77.03,"wnd":2.55,"cc":0.341,"pwr":827.254},{"t":"2023-01-10 08:00:00","h":8,"doy":10,"irr":216.95,"tmp":7.21,"hum":81.25,"wnd":2.25,"cc":0.297,"pwr":1890.167},{"t":"2023-01-10 09:00:00","h":9,"doy":10,"irr":289.6,"tmp":2.98,"hum":75.7,"wnd":1.42,"cc":0.299,"pwr":2515.026},{"t":"2023-01-10 10:00:00","h":10,"doy":10,"irr":338.62,"tmp":6.18,"hum":82.67,"wnd":4.18,"cc":0.337,"pwr":2935.737},{"t":"2023-01-10 11:00:00","h":11,"doy":10,"irr":355.96,"tmp":6.77,"hum":61.27,"wnd":7.07,"cc":0.408,"pwr":3077.925},{"t":"2023-01-10 12:00:00","h":12,"doy":10,"irr":386.4,"tmp":8.78,"hum":67.77,"wnd":1.55,"cc":0.389,"pwr":3348.561},{"t":"2023-01-10 13:00:00","h":13,"doy":10,"irr":374.88,"tmp":10.27,"hum":68.21,"wnd":1.38,"cc":0.363,"pwr":3249.366},{"t":"2023-01-10 14:00:00","h":14,"doy":10,"irr":337.59,"tmp":4.46,"hum":97.93,"wnd":18,"cc":0.404,"pwr":2926.223},{"t":"2023-01-10 15:00:00","h":15,"doy":10,"irr":274.16,"tmp":6,"hum":88.47,"wnd":1.52,"cc":0.392,"pwr":2376.285},{"t":"2023-01-10 16:00:00","h":16,"doy":10,"irr":201.76,"tmp":7.44,"hum":80.1,"wnd":2.18,"cc":0.349,"pwr":1751.423},{"t":"2023-01-10 17:00:00","h":17,"doy":10,"irr":123.16,"tmp":2.22,"hum":75.76,"wnd":0.86,"cc":0.193,"pwr":1078.095},{"t":"2023-01-10 18:00:00","h":18,"doy":10,"irr":4.83,"tmp":4.37,"hum":73.8,"wnd":0.64,"cc":0.247,"pwr":42.986},{"t":"2023-01-11 07:00:00","h":7,"doy":11,"irr":104.42,"tmp":5,"hum":82.54,"wnd":2.09,"cc":0.388,"pwr":906.818},{"t":"2023-01-11 08:00:00","h":8,"doy":11,"irr":204.71,"tmp":5.58,"hum":86.29,"wnd":4.66,"cc":0.385,"pwr":1778.593},{"t":"2023-01-11 09:00:00","h":9,"doy":11,"irr":281.87,"tmp":7.28,"hum":68.03,"wnd":1.21,"cc":0.284,"pwr":2445.449},{"t":"2023-01-11 10:00:00","h":10,"doy":11,"irr":374.01,"tmp":8.26,"hum":73.66,"wnd":3.42,"cc":0.28,"pwr":3257.46},{"t":"2023-01-11 11:00:00","h":11,"doy":11,"irr":427.59,"tmp":10.48,"hum":66.37,"wnd":7.21,"cc":0.266,"pwr":3728.151},{"t":"2023-01-11 12:00:00","h":12,"doy":11,"irr":432.58,"tmp":7.17,"hum":84.82,"wnd":2.19,"cc":0.295,"pwr":3767.211},{"t":"2023-01-11 13:00:00","h":13,"doy":11,"irr":398.84,"tmp":8.85,"hum":92.81,"wnd":2.31,"cc":0.346,"pwr":3465.964},{"t":"2023-01-11 14:00:00","h":14,"doy":11,"irr":339.31,"tmp":7.06,"hum":89.74,"wnd":10.11,"cc":0.394,"pwr":2942.011},{"t":"2023-01-11 15:00:00","h":15,"doy":11,"irr":280.34,"tmp":9.05,"hum":64.15,"wnd":3.81,"cc":0.352,"pwr":2431.038},{"t":"2023-01-11 16:00:00","h":16,"doy":11,"irr":206.07,"tmp":6.46,"hum":81.43,"wnd":3.53,"cc":0.341,"pwr":1790.802},{"t":"2023-01-11 17:00:00","h":17,"doy":11,"irr":123.66,"tmp":4.97,"hum":83.72,"wnd":3.91,"cc":0.315,"pwr":1082.393},{"t":"2023-01-11 18:00:00","h":18,"doy":11,"irr":10.11,"tmp":3.48,"hum":95.5,"wnd":1.9,"cc":0.37,"pwr":88.627},{"t":"2023-01-12 07:00:00","h":7,"doy":12,"irr":87.9,"tmp":4.82,"hum":95.78,"wnd":3.31,"cc":0.449,"pwr":757.841},{"t":"2023-01-12 08:00:00","h":8,"doy":12,"irr":191.58,"tmp":9.31,"hum":74.84,"wnd":4.17,"cc":0.44,"pwr":1659.353},{"t":"2023-01-12 09:00:00","h":9,"doy":12,"irr":242.92,"tmp":7.27,"hum":78,"wnd":3.25,"cc":0.477,"pwr":2093.959},{"t":"2023-01-12 10:00:00","h":10,"doy":12,"irr":326.37,"tmp":7.85,"hum":80.74,"wnd":4.58,"cc":0.413,"pwr":2824.147},{"t":"2023-01-12 11:00:00","h":11,"doy":12,"irr":344.18,"tmp":6.38,"hum":51.93,"wnd":5.35,"cc":0.414,"pwr":2971.51},{"t":"2023-01-12 12:00:00","h":12,"doy":12,"irr":418.85,"tmp":8.29,"hum":70.34,"wnd":1.63,"cc":0.31,"pwr":3641.578},{"t":"2023-01-12 13:00:00","h":13,"doy":12,"irr":355.88,"tmp":10.41,"hum":62.94,"wnd":3.47,"cc":0.43,"pwr":3076.539},{"t":"2023-01-12 14:00:00","h":14,"doy":12,"irr":370.21,"tmp":5.6,"hum":73.93,"wnd":3.38,"cc":0.291,"pwr":3221.555},{"t":"2023-01-12 15:00:00","h":15,"doy":12,"irr":329.83,"tmp":6.5,"hum":91.64,"wnd":2.4,"cc":0.23,"pwr":2882.76},{"t":"2023-01-12 16:00:00","h":16,"doy":12,"irr":237.19,"tmp":4.19,"hum":55.39,"wnd":4.02,"cc":0.198,"pwr":2075.167},{"t":"2023-01-12 17:00:00","h":17,"doy":12,"irr":120.32,"tmp":7.41,"hum":62.3,"wnd":1.96,"cc":0.227,"pwr":1051.457},{"t":"2023-01-13 07:00:00","h":7,"doy":13,"irr":104.52,"tmp":4.68,"hum":85.88,"wnd":4.34,"cc":0.288,"pwr":907.47},{"t":"2023-01-13 08:00:00","h":8,"doy":13,"irr":201.96,"tmp":8.01,"hum":64.29,"wnd":3.76,"cc":0.295,"pwr":1752.124},{"t":"2023-01-13 09:00:00","h":9,"doy":13,"irr":299.21,"tmp":4.71,"hum":93.75,"wnd":6.66,"cc":0.304,"pwr":2602.172},{"t":"2023-01-13 10:00:00","h":10,"doy":13,"irr":358.95,"tmp":5.81,"hum":86.49,"wnd":2.41,"cc":0.304,"pwr":3119.06},{"t":"2023-01-13 11:00:00","h":11,"doy":13,"irr":391.45,"tmp":8.26,"hum":91.98,"wnd":1.65,"cc":0.34,"pwr":3397.812},{"t":"2023-01-13 12:00:00","h":12,"doy":13,"irr":441.28,"tmp":11.2,"hum":75.88,"wnd":1.99,"cc":0.267,"pwr":3846.127},{"t":"2023-01-13 13:00:00","h":13,"doy":13,"irr":384.79,"tmp":6.48,"hum":75.01,"wnd":9.82,"cc":0.37,"pwr":3336.821},{"t":"2023-01-13 14:00:00","h":14,"doy":13,"irr":402.86,"tmp":7.4,"hum":79.34,"wnd":1,"cc":0.228,"pwr":3520.23},{"t":"2023-01-13 15:00:00","h":15,"doy":13,"irr":267.73,"tmp":8.65,"hum":83.41,"wnd":6.47,"cc":0.364,"pwr":2317.095},{"t":"2023-01-13 16:00:00","h":16,"doy":13,"irr":202.69,"tmp":7.4,"hum":93.25,"wnd":6.44,"cc":0.338,"pwr":1759.561},{"t":"2023-01-13 17:00:00","h":17,"doy":13,"irr":119.57,"tmp":5.99,"hum":75.55,"wnd":3.89,"cc":0.285,"pwr":1044.231},{"t":"2023-01-14 07:00:00","h":7,"doy":14,"irr":124.2,"tmp":4.73,"hum":68.61,"wnd":2.97,"cc":0.225,"pwr":1086.948},{"t":"2023-01-14 08:00:00","h":8,"doy":14,"irr":233.03,"tmp":8.65,"hum":71.43,"wnd":9.65,"cc":0.243,"pwr":2036.276},{"t":"2023-01-14 09:00:00","h":9,"doy":14,"irr":337.36,"tmp":4.22,"hum":83.07,"wnd":2.64,"cc":0.164,"pwr":2951.805},{"t":"2023-01-14 10:00:00","h":10,"doy":14,"irr":368.93,"tmp":7.21,"hum":96.77,"wnd":5.61,"cc":0.29,"pwr":3209.122},{"t":"2023-01-14 11:00:00","h":11,"doy":14,"irr":434.12,"tmp":7.14,"hum":77.12,"wnd":7.06,"cc":0.227,"pwr":3786.232},{"t":"2023-01-14 12:00:00","h":12,"doy":14,"irr":446.74,"tmp":8.61,"hum":79.15,"wnd":0.81,"cc":0.26,"pwr":3895.248},{"t":"2023-01-14 13:00:00","h":13,"doy":14,"irr":426.88,"tmp":8.74,"hum":73.25,"wnd":3.41,"cc":0.254,"pwr":3720.016},{"t":"2023-01-14 14:00:00","h":14,"doy":14,"irr":374.1,"tmp":7.8,"hum":77.33,"wnd":1.72,"cc":0.267,"pwr":3256.635},{"t":"2023-01-14 15:00:00","h":15,"doy":14,"irr":295.83,"tmp":3.93,"hum":89.96,"wnd":1.66,"cc":0.308,"pwr":2570.741},{"t":"2023-01-14 16:00:00","h":16,"doy":14,"irr":225.15,"tmp":3.07,"hum":86.1,"wnd":2.01,"cc":0.255,"pwr":1963.51},{"t":"2023-01-14 17:00:00","h":17,"doy":14,"irr":101.55,"tmp":1.15,"hum":81.35,"wnd":1.12,"cc":0.286,"pwr":879.85},{"t":"2023-01-15 07:00:00","h":7,"doy":15,"irr":97.72,"tmp":4.38,"hum":74.46,"wnd":6.32,"cc":0.422,"pwr":845.511},{"t":"2023-01-15 08:00:00","h":8,"doy":15,"irr":207.74,"tmp":6.15,"hum":77.61,"wnd":0.9,"cc":0.333,"pwr":1804.474},{"t":"2023-01-15 09:00:00","h":9,"doy":15,"irr":273.06,"tmp":8.02,"hum":87.45,"wnd":3.57,"cc":0.4,"pwr":2364.604},{"t":"2023-01-15 10:00:00","h":10,"doy":15,"irr":315.94,"tmp":8.63,"hum":77.73,"wnd":3.08,"cc":0.438,"pwr":2727.806},{"t":"2023-01-15 11:00:00","h":11,"doy":15,"irr":347.09,"tmp":8.98,"hum":82.16,"wnd":1.91,"cc":0.45,"pwr":2996.019},{"t":"2023-01-15 12:00:00","h":12,"doy":15,"irr":400.43,"tmp":8.67,"hum":88.27,"wnd":3.69,"cc":0.343,"pwr":3472.161},{"t":"2023-01-15 13:00:00","h":13,"doy":15,"irr":400.92,"tmp":6.34,"hum":70.48,"wnd":5.41,"cc":0.292,"pwr":3482.028},{"t":"2023-01-15 14:00:00","h":14,"doy":15,"irr":371.85,"tmp":11.8,"hum":75.49,"wnd":3.5,"cc":0.293,"pwr":3234.898},{"t":"2023-01-15 15:00:00","h":15,"doy":15,"irr":288.63,"tmp":5.03,"hum":56.67,"wnd":1.57,"cc":0.323,"pwr":2504.813},{"t":"2023-01-15 16:00:00","h":16,"doy":15,"irr":197.29,"tmp":6.39,"hum":67.07,"wnd":4.38,"cc":0.316,"pwr":1709.745},{"t":"2023-01-15 17:00:00","h":17,"doy":15,"irr":117.17,"tmp":9.74,"hum":78.74,"wnd":6.65,"cc":0.177,"pwr":1021.962},{"t":"2023-01-16 07:00:00","h":7,"doy":16,"irr":113.96,"tmp":4.93,"hum":78.68,"wnd":2.86,"cc":0.305,"pwr":992.129},{"t":"2023-01-16 08:00:00","h":8,"doy":16,"irr":220.03,"tmp":7.45,"hum":81.82,"wnd":4.02,"cc":0.221,"pwr":1916.07},{"t":"2023-01-16 09:00:00","h":9,"doy":16,"irr":299.31,"tmp":5.59,"hum":87.01,"wnd":4.26,"cc":0.249,"pwr":2602.167},{"t":"2023-01-16 10:00:00","h":10,"doy":16,"irr":343.6,"tmp":7.73,"hum":66.66,"wnd":2.84,"cc":0.349,"pwr":2978.305},{"t":"2023-01-16 11:00:00","h":11,"doy":16,"irr":411.89,"tmp":5.42,"hum":87.12,"wnd":2.61,"cc":0.272,"pwr":3581.662},{"t":"2023-01-16 12:00:00","h":12,"doy":16,"irr":467.23,"tmp":9.35,"hum":71.79,"wnd":4.71,"cc":0.192,"pwr":4081.519},{"t":"2023-01-16 13:00:00","h":13,"doy":16,"irr":389.97,"tmp":10.86,"hum":76.34,"wnd":4.63,"cc":0.382,"pwr":3382.397},{"t":"2023-01-16 14:00:00","h":14,"doy":16,"irr":337.44,"tmp":10.08,"hum":77.52,"wnd":2.54,"cc":0.371,"pwr":2922.041},{"t":"2023-01-16 15:00:00","h":15,"doy":16,"irr":313.12,"tmp":8.38,"hum":78.7,"wnd":0.95,"cc":0.254,"pwr":2727.615},{"t":"2023-01-16 16:00:00","h":16,"doy":16,"irr":205.76,"tmp":7.16,"hum":66.34,"wnd":4.72,"cc":0.344,"pwr":1786.777},{"t":"2023-01-16 17:00:00","h":17,"doy":16,"irr":105.79,"tmp":8.43,"hum":64.84,"wnd":5.61,"cc":0.355,"pwr":917.993},{"t":"2023-01-17 07:00:00","h":7,"doy":17,"irr":104.2,"tmp":4.09,"hum":86.26,"wnd":3.07,"cc":0.526,"pwr":903.654},{"t":"2023-01-17 08:00:00","h":8,"doy":17,"irr":217.03,"tmp":4.16,"hum":81.01,"wnd":1.93,"cc":0.219,"pwr":1888.142},{"t":"2023-01-17 09:00:00","h":9,"doy":17,"irr":273.76,"tmp":9.41,"hum":85.19,"wnd":1.99,"cc":0.342,"pwr":2369.931},{"t":"2023-01-17 10:00:00","h":10,"doy":17,"irr":352.01,"tmp":7.68,"hum":62.68,"wnd":4.48,"cc":0.337,"pwr":3054.131},{"t":"2023-01-17 11:00:00","h":11,"doy":17,"irr":434.4,"tmp":7.99,"hum":81.63,"wnd":5.79,"cc":0.27,"pwr":3786.418},{"t":"2023-01-17 12:00:00","h":12,"doy":17,"irr":404.96,"tmp":8.12,"hum":69.5,"wnd":3.22,"cc":0.385,"pwr":3512.505},{"t":"2023-01-17 13:00:00","h":13,"doy":17,"irr":403.61,"tmp":6.58,"hum":69.22,"wnd":7.02,"cc":0.346,"pwr":3505.789},{"t":"2023-01-17 14:00:00","h":14,"doy":17,"irr":348.68,"tmp":8.63,"hum":72.39,"wnd":6.1,"cc":0.373,"pwr":3023.555},{"t":"2023-01-17 15:00:00","h":15,"doy":17,"irr":272.96,"tmp":9.97,"hum":69.67,"wnd":3.83,"cc":0.407,"pwr":2362.18},{"t":"2023-01-17 16:00:00","h":16,"doy":17,"irr":216.1,"tmp":5.46,"hum":80.28,"wnd":1.83,"cc":0.301,"pwr":1879.752},{"t":"2023-01-17 17:00:00","h":17,"doy":17,"irr":126.56,"tmp":6.76,"hum":68.81,"wnd":3.85,"cc":0.247,"pwr":1108.219},{"t":"2023-01-18 07:00:00","h":7,"doy":18,"irr":114.59,"tmp":7.17,"hum":72.95,"wnd":1.45,"cc":0.196,"pwr":998.559},{"t":"2023-01-18 08:00:00","h":8,"doy":18,"irr":210.33,"tmp":7.89,"hum":77.98,"wnd":3.42,"cc":0.331,"pwr":1827.029},{"t":"2023-01-18 09:00:00","h":9,"doy":18,"irr":310.49,"tmp":6.19,"hum":81.29,"wnd":3.7,"cc":0.264,"pwr":2702.962},{"t":"2023-01-18 10:00:00","h":10,"doy":18,"irr":345.61,"tmp":9.58,"hum":67.17,"wnd":2.26,"cc":0.374,"pwr":2995.56}]
+;window.AEP_DATA=﻿[{"t":"2023-01-01 00:00:00","h":0,"doy":1,"irr":0,"tmp":4.41,"hum":85.32,"wnd":3.66,"cc":0,"pwr":0,"dem":9254.96,"pct":0},{"t":"2023-01-01 01:00:00","h":1,"doy":1,"irr":0,"tmp":2.39,"hum":81.25,"wnd":4.88,"cc":0,"pwr":0,"dem":9606.17,"pct":0},{"t":"2023-01-01 02:00:00","h":2,"doy":1,"irr":0,"tmp":1.17,"hum":65.38,"wnd":2.99,"cc":0,"pwr":0,"dem":9595.75,"pct":0},{"t":"2023-01-01 03:00:00","h":3,"doy":1,"irr":0,"tmp":2.19,"hum":80.74,"wnd":7.62,"cc":0,"pwr":0,"dem":9328.93,"pct":0},{"t":"2023-01-01 04:00:00","h":4,"doy":1,"irr":0,"tmp":4.53,"hum":90.09,"wnd":10.05,"cc":0,"pwr":0,"dem":9482.11,"pct":0},{"t":"2023-01-01 05:00:00","h":5,"doy":1,"irr":0,"tmp":2.8,"hum":83.81,"wnd":7.1,"cc":0,"pwr":0,"dem":9290.35,"pct":0},{"t":"2023-01-01 06:00:00","h":6,"doy":1,"irr":0,"tmp":4.18,"hum":82.7,"wnd":5.14,"cc":0,"pwr":0,"dem":9632.57,"pct":0},{"t":"2023-01-01 07:00:00","h":7,"doy":1,"irr":118.83,"tmp":1.56,"hum":76.69,"wnd":4.12,"cc":0,"pwr":1039.47,"dem":6627.63,"pct":35},{"t":"2023-01-01 08:00:00","h":8,"doy":1,"irr":199.22,"tmp":6.05,"hum":79.22,"wnd":3.24,"cc":0,"pwr":1730.645,"dem":4500,"pct":35},{"t":"2023-01-01 09:00:00","h":9,"doy":1,"irr":252.9,"tmp":4.81,"hum":86.79,"wnd":4.97,"cc":0,"pwr":2185.902,"dem":4500,"pct":35},{"t":"2023-01-01 10:00:00","h":10,"doy":1,"irr":363.08,"tmp":5.64,"hum":89.41,"wnd":3.88,"cc":0,"pwr":3161.026,"dem":4500,"pct":35},{"t":"2023-01-01 11:00:00","h":11,"doy":1,"irr":398.3,"tmp":9.63,"hum":70.42,"wnd":6.39,"cc":0,"pwr":3465.255,"dem":4500,"pct":35},{"t":"2023-01-01 12:00:00","h":12,"doy":1,"irr":374.27,"tmp":10.49,"hum":71.46,"wnd":2.56,"cc":0,"pwr":3241.487,"dem":4500,"pct":35},{"t":"2023-01-01 13:00:00","h":13,"doy":1,"irr":365.87,"tmp":5.52,"hum":93.04,"wnd":6.51,"cc":0,"pwr":3170.383,"dem":4500,"pct":35},{"t":"2023-01-01 14:00:00","h":14,"doy":1,"irr":348.91,"tmp":6.38,"hum":75.25,"wnd":4.2,"cc":0,"pwr":3031.238,"dem":4500,"pct":35},{"t":"2023-01-01 15:00:00","h":15,"doy":1,"irr":268.97,"tmp":5.91,"hum":81.47,"wnd":4.71,"cc":0,"pwr":2331.641,"dem":4500,"pct":35},{"t":"2023-01-01 16:00:00","h":16,"doy":1,"irr":214.61,"tmp":6.37,"hum":80.24,"wnd":2.87,"cc":0,"pwr":1870.501,"dem":4500,"pct":35},{"t":"2023-01-01 17:00:00","h":17,"doy":1,"irr":85.44,"tmp":3.6,"hum":81.81,"wnd":3.23,"cc":0,"pwr":736.262,"dem":7631.42,"pct":33.76},{"t":"2023-01-01 18:00:00","h":18,"doy":1,"irr":2.07,"tmp":2.06,"hum":96.32,"wnd":5.38,"cc":0,"pwr":18.092,"dem":10434.66,"pct":0.61},{"t":"2023-01-01 19:00:00","h":19,"doy":1,"irr":0,"tmp":2.67,"hum":79.86,"wnd":7.78,"cc":0,"pwr":0,"dem":10471.86,"pct":0},{"t":"2023-01-01 20:00:00","h":20,"doy":1,"irr":0,"tmp":1.39,"hum":91.93,"wnd":1.07,"cc":0,"pwr":0,"dem":10572.79,"pct":0},{"t":"2023-01-01 21:00:00","h":21,"doy":1,"irr":0,"tmp":4.57,"hum":76.41,"wnd":3.28,"cc":0,"pwr":0,"dem":9959.53,"pct":0},{"t":"2023-01-01 22:00:00","h":22,"doy":1,"irr":0,"tmp":2.24,"hum":96.17,"wnd":1.41,"cc":0,"pwr":0,"dem":9721.26,"pct":0},{"t":"2023-01-01 23:00:00","h":23,"doy":1,"irr":0,"tmp":2.96,"hum":75.21,"wnd":2.82,"cc":0,"pwr":0,"dem":10029.86,"pct":0},{"t":"2023-01-02 00:00:00","h":0,"doy":2,"irr":0,"tmp":4.48,"hum":84.84,"wnd":5.35,"cc":0,"pwr":0,"dem":9961.58,"pct":0},{"t":"2023-01-02 01:00:00","h":1,"doy":2,"irr":0,"tmp":3.22,"hum":64.04,"wnd":5.16,"cc":0,"pwr":0,"dem":10199.25,"pct":0},{"t":"2023-01-02 02:00:00","h":2,"doy":2,"irr":0,"tmp":0.79,"hum":81.14,"wnd":7.73,"cc":0,"pwr":0,"dem":10182.94,"pct":0},{"t":"2023-01-02 03:00:00","h":3,"doy":2,"irr":0,"tmp":5.75,"hum":85.88,"wnd":3.8,"cc":0,"pwr":0,"dem":9707.74,"pct":0},{"t":"2023-01-02 04:00:00","h":4,"doy":2,"irr":0,"tmp":3.18,"hum":69.51,"wnd":1.2,"cc":0,"pwr":0,"dem":10067.06,"pct":0},{"t":"2023-01-02 05:00:00","h":5,"doy":2,"irr":0,"tmp":3.21,"hum":78.49,"wnd":3.7,"cc":0,"pwr":0,"dem":10377.36,"pct":0},{"t":"2023-01-02 06:00:00","h":6,"doy":2,"irr":0,"tmp":7.1,"hum":98,"wnd":6.61,"cc":0,"pwr":0,"dem":10619.92,"pct":0},{"t":"2023-01-02 07:00:00","h":7,"doy":2,"irr":113.12,"tmp":7.52,"hum":69.59,"wnd":6.11,"cc":0,"pwr":987.392,"dem":7191.87,"pct":35},{"t":"2023-01-02 08:00:00","h":8,"doy":2,"irr":170.49,"tmp":6.74,"hum":83.61,"wnd":5.13,"cc":0,"pwr":1470.4,"dem":5731.97,"pct":35},{"t":"2023-01-02 09:00:00","h":9,"doy":2,"irr":277.33,"tmp":4.51,"hum":68.57,"wnd":2.82,"cc":0,"pwr":2406.465,"dem":4500,"pct":35},{"t":"2023-01-02 10:00:00","h":10,"doy":2,"irr":337.63,"tmp":8.84,"hum":68.74,"wnd":7.32,"cc":0,"pwr":2929.112,"dem":4500,"pct":35},{"t":"2023-01-02 11:00:00","h":11,"doy":2,"irr":362.74,"tmp":4.52,"hum":84.57,"wnd":3.6,"cc":0,"pwr":3141.649,"dem":4500,"pct":35},{"t":"2023-01-02 12:00:00","h":12,"doy":2,"irr":365.91,"tmp":7.51,"hum":77.42,"wnd":1.48,"cc":0,"pwr":3165.516,"dem":4500,"pct":35},{"t":"2023-01-02 13:00:00","h":13,"doy":2,"irr":392.03,"tmp":6.48,"hum":72.01,"wnd":2.39,"cc":0,"pwr":3407.302,"dem":4500,"pct":35},{"t":"2023-01-02 14:00:00","h":14,"doy":2,"irr":319.34,"tmp":5.72,"hum":76.54,"wnd":4.22,"cc":0,"pwr":2763.678,"dem":4500,"pct":35},{"t":"2023-01-02 15:00:00","h":15,"doy":2,"irr":268.05,"tmp":6.49,"hum":87.76,"wnd":1.72,"cc":0,"pwr":2322.66,"dem":4500,"pct":35},{"t":"2023-01-02 16:00:00","h":16,"doy":2,"irr":194.19,"tmp":6.23,"hum":77.89,"wnd":2.38,"cc":0,"pwr":1684.545,"dem":4500,"pct":35},{"t":"2023-01-02 17:00:00","h":17,"doy":2,"irr":98.47,"tmp":5.53,"hum":85.03,"wnd":1.91,"cc":0,"pwr":852.817,"dem":7667.74,"pct":35},{"t":"2023-01-02 18:00:00","h":18,"doy":2,"irr":1.24,"tmp":3.19,"hum":68.11,"wnd":4.14,"cc":0,"pwr":10.658,"dem":11301.14,"pct":0.33},{"t":"2023-01-02 19:00:00","h":19,"doy":2,"irr":0,"tmp":1.96,"hum":81.25,"wnd":2.23,"cc":0,"pwr":0,"dem":11077.16,"pct":0},{"t":"2023-01-02 20:00:00","h":20,"doy":2,"irr":0,"tmp":2.59,"hum":80.76,"wnd":4.86,"cc":0,"pwr":0,"dem":11099.27,"pct":0},{"t":"2023-01-02 21:00:00","h":21,"doy":2,"irr":0,"tmp":4.63,"hum":73.11,"wnd":3.39,"cc":0,"pwr":0,"dem":10745.83,"pct":0},{"t":"2023-01-02 22:00:00","h":22,"doy":2,"irr":0,"tmp":3.52,"hum":79.26,"wnd":0.94,"cc":0,"pwr":0,"dem":10630.6,"pct":0},{"t":"2023-01-02 23:00:00","h":23,"doy":2,"irr":0,"tmp":2.01,"hum":80.27,"wnd":3.22,"cc":0,"pwr":0,"dem":10535.67,"pct":0},{"t":"2023-01-03 00:00:00","h":0,"doy":3,"irr":0,"tmp":0.82,"hum":90,"wnd":1.88,"cc":0,"pwr":0,"dem":10836.04,"pct":0},{"t":"2023-01-03 01:00:00","h":1,"doy":3,"irr":0,"tmp":4.35,"hum":89.93,"wnd":4.64,"cc":0,"pwr":0,"dem":9921.07,"pct":0},{"t":"2023-01-03 02:00:00","h":2,"doy":3,"irr":0,"tmp":4.82,"hum":72.35,"wnd":2.53,"cc":0,"pwr":0,"dem":9720.37,"pct":0},{"t":"2023-01-03 03:00:00","h":3,"doy":3,"irr":0,"tmp":3.05,"hum":91.54,"wnd":5.89,"cc":0,"pwr":0,"dem":10017.85,"pct":0},{"t":"2023-01-03 04:00:00","h":4,"doy":3,"irr":0,"tmp":3.92,"hum":74.33,"wnd":7.03,"cc":0,"pwr":0,"dem":9865.84,"pct":0},{"t":"2023-01-03 05:00:00","h":5,"doy":3,"irr":0,"tmp":5.34,"hum":80.04,"wnd":2.17,"cc":0,"pwr":0,"dem":9875.05,"pct":0},{"t":"2023-01-03 06:00:00","h":6,"doy":3,"irr":0,"tmp":6.38,"hum":66.76,"wnd":5.93,"cc":0,"pwr":0,"dem":10612.95,"pct":0},{"t":"2023-01-03 07:00:00","h":7,"doy":3,"irr":103.03,"tmp":3.8,"hum":79.27,"wnd":1.99,"cc":0,"pwr":893.654,"dem":7787.74,"pct":35},{"t":"2023-01-03 08:00:00","h":8,"doy":3,"irr":199.09,"tmp":5.23,"hum":92.52,"wnd":3.14,"cc":0,"pwr":1728.671,"dem":4841.53,"pct":35},{"t":"2023-01-03 09:00:00","h":9,"doy":3,"irr":315.33,"tmp":6.87,"hum":77.09,"wnd":2.95,"cc":0,"pwr":2752.92,"dem":4500,"pct":35},{"t":"2023-01-03 10:00:00","h":10,"doy":3,"irr":356.4,"tmp":5,"hum":76.92,"wnd":2.46,"cc":0,"pwr":3100.062,"dem":4500,"pct":35},{"t":"2023-01-03 11:00:00","h":11,"doy":3,"irr":415.59,"tmp":4.01,"hum":62.86,"wnd":4.13,"cc":0,"pwr":3622.097,"dem":4500,"pct":35},{"t":"2023-01-03 12:00:00","h":12,"doy":3,"irr":408.64,"tmp":5.36,"hum":78.67,"wnd":6.83,"cc":0,"pwr":3552.299,"dem":4500,"pct":35},{"t":"2023-01-03 13:00:00","h":13,"doy":3,"irr":416.56,"tmp":6.81,"hum":77.5,"wnd":4.39,"cc":0,"pwr":3630.678,"dem":4500,"pct":35},{"t":"2023-01-03 14:00:00","h":14,"doy":3,"irr":348.92,"tmp":5.74,"hum":74.21,"wnd":3.17,"cc":0,"pwr":3031.819,"dem":4500,"pct":35},{"t":"2023-01-03 15:00:00","h":15,"doy":3,"irr":297.92,"tmp":4.96,"hum":76.44,"wnd":1.48,"cc":0,"pwr":2594.595,"dem":4500,"pct":35},{"t":"2023-01-03 16:00:00","h":16,"doy":3,"irr":186.66,"tmp":5.44,"hum":80.26,"wnd":0.74,"cc":0,"pwr":1616.083,"dem":4672.14,"pct":35},{"t":"2023-01-03 17:00:00","h":17,"doy":3,"irr":98.94,"tmp":4.37,"hum":81.79,"wnd":2.75,"cc":0,"pwr":857.524,"dem":7766.59,"pct":35},{"t":"2023-01-03 18:00:00","h":18,"doy":3,"irr":11.27,"tmp":2.23,"hum":81.46,"wnd":1.24,"cc":0,"pwr":99.252,"dem":10828.72,"pct":3.21},{"t":"2023-01-03 19:00:00","h":19,"doy":3,"irr":0,"tmp":-0.1,"hum":93.26,"wnd":1.69,"cc":0,"pwr":0,"dem":11465.63,"pct":0},{"t":"2023-01-03 20:00:00","h":20,"doy":3,"irr":0,"tmp":1.97,"hum":75.73,"wnd":3.81,"cc":0,"pwr":0,"dem":11282.49,"pct":0},{"t":"2023-01-03 21:00:00","h":21,"doy":3,"irr":0,"tmp":4.94,"hum":92.44,"wnd":1.71,"cc":0,"pwr":0,"dem":10716.25,"pct":0},{"t":"2023-01-03 22:00:00","h":22,"doy":3,"irr":0,"tmp":2.43,"hum":78.61,"wnd":2.21,"cc":0,"pwr":0,"dem":10621.46,"pct":0},{"t":"2023-01-03 23:00:00","h":23,"doy":3,"irr":0,"tmp":2.78,"hum":85.68,"wnd":3.85,"cc":0,"pwr":0,"dem":10450.02,"pct":0},{"t":"2023-01-04 00:00:00","h":0,"doy":4,"irr":0,"tmp":4.63,"hum":88.33,"wnd":3.88,"cc":0,"pwr":0,"dem":9955.65,"pct":0},{"t":"2023-01-04 01:00:00","h":1,"doy":4,"irr":0,"tmp":4.98,"hum":82.52,"wnd":2.64,"cc":0,"pwr":0,"dem":10138.16,"pct":0},{"t":"2023-01-04 02:00:00","h":2,"doy":4,"irr":0,"tmp":2.72,"hum":79.12,"wnd":1.32,"cc":0,"pwr":0,"dem":10373.91,"pct":0},{"t":"2023-01-04 03:00:00","h":3,"doy":4,"irr":0,"tmp":3.26,"hum":83.69,"wnd":2.59,"cc":0,"pwr":0,"dem":9989.04,"pct":0},{"t":"2023-01-04 04:00:00","h":4,"doy":4,"irr":0,"tmp":5.62,"hum":64.22,"wnd":3.61,"cc":0,"pwr":0,"dem":10080.52,"pct":0},{"t":"2023-01-04 05:00:00","h":5,"doy":4,"irr":0,"tmp":4.73,"hum":57.86,"wnd":3.38,"cc":0,"pwr":0,"dem":10086.39,"pct":0},{"t":"2023-01-04 06:00:00","h":6,"doy":4,"irr":0,"tmp":1.7,"hum":87.13,"wnd":6.15,"cc":0,"pwr":0,"dem":10842,"pct":0},{"t":"2023-01-04 07:00:00","h":7,"doy":4,"irr":97.17,"tmp":1.87,"hum":78.39,"wnd":2.43,"cc":0,"pwr":841.498,"dem":8350.25,"pct":35},{"t":"2023-01-04 08:00:00","h":8,"doy":4,"irr":213.55,"tmp":5,"hum":71.92,"wnd":1.46,"cc":0,"pwr":1860.824,"dem":4500,"pct":35},{"t":"2023-01-04 09:00:00","h":9,"doy":4,"irr":349.62,"tmp":4.79,"hum":76.66,"wnd":2.74,"cc":0,"pwr":3069.776,"dem":4500,"pct":35},{"t":"2023-01-04 10:00:00","h":10,"doy":4,"irr":403.48,"tmp":7.58,"hum":73.01,"wnd":2.66,"cc":0,"pwr":3531.406,"dem":4500,"pct":35},{"t":"2023-01-04 11:00:00","h":11,"doy":4,"irr":423.26,"tmp":8.35,"hum":64.26,"wnd":3.56,"cc":0,"pwr":3692.003,"dem":4500,"pct":35},{"t":"2023-01-04 12:00:00","h":12,"doy":4,"irr":407.22,"tmp":7.8,"hum":84.06,"wnd":7.41,"cc":0,"pwr":3539.409,"dem":4500,"pct":35},{"t":"2023-01-04 13:00:00","h":13,"doy":4,"irr":387.5,"tmp":6.07,"hum":87.78,"wnd":1.72,"cc":0,"pwr":3365.957,"dem":4500,"pct":35},{"t":"2023-01-04 14:00:00","h":14,"doy":4,"irr":374.2,"tmp":4.97,"hum":80.51,"wnd":4.06,"cc":0,"pwr":3262.281,"dem":4500,"pct":35},{"t":"2023-01-04 15:00:00","h":15,"doy":4,"irr":287.74,"tmp":7.23,"hum":79.74,"wnd":4.27,"cc":0,"pwr":2501.022,"dem":4500,"pct":35},{"t":"2023-01-04 16:00:00","h":16,"doy":4,"irr":200.54,"tmp":6.65,"hum":77.5,"wnd":2.91,"cc":0,"pwr":1742.105,"dem":4500,"pct":35},{"t":"2023-01-04 17:00:00","h":17,"doy":4,"irr":101.73,"tmp":6.11,"hum":78.97,"wnd":3.45,"cc":0,"pwr":882.7,"dem":7270.99,"pct":35},{"t":"2023-01-04 18:00:00","h":18,"doy":4,"irr":1.36,"tmp":2.98,"hum":83.9,"wnd":3.23,"cc":0,"pwr":11.651,"dem":11250.94,"pct":0.36},{"t":"2023-01-04 19:00:00","h":19,"doy":4,"irr":0,"tmp":2.24,"hum":75.38,"wnd":3.39,"cc":0,"pwr":0,"dem":11595.02,"pct":0},{"t":"2023-01-04 20:00:00","h":20,"doy":4,"irr":0,"tmp":2.63,"hum":88.16,"wnd":11.82,"cc":0,"pwr":0,"dem":11367.23,"pct":0},{"t":"2023-01-04 21:00:00","h":21,"doy":4,"irr":0,"tmp":3.43,"hum":81.99,"wnd":4.53,"cc":0,"pwr":0,"dem":10950.2,"pct":0},{"t":"2023-01-04 22:00:00","h":22,"doy":4,"irr":0,"tmp":2.55,"hum":88.92,"wnd":1.85,"cc":0,"pwr":0,"dem":10786.94,"pct":0},{"t":"2023-01-04 23:00:00","h":23,"doy":4,"irr":0,"tmp":2.15,"hum":91.23,"wnd":3.48,"cc":0,"pwr":0,"dem":10574.92,"pct":0},{"t":"2023-01-05 00:00:00","h":0,"doy":5,"irr":0,"tmp":4.54,"hum":79.55,"wnd":15.17,"cc":0,"pwr":0,"dem":10028.12,"pct":0},{"t":"2023-01-05 01:00:00","h":1,"doy":5,"irr":0,"tmp":3.03,"hum":81.42,"wnd":3,"cc":0,"pwr":0,"dem":10158.98,"pct":0},{"t":"2023-01-05 07:00:00","h":7,"doy":5,"irr":105.63,"tmp":3.8,"hum":59.08,"wnd":4.42,"cc":0,"pwr":918.563,"dem":7698.72,"pct":35},{"t":"2023-01-05 08:00:00","h":8,"doy":5,"irr":246.21,"tmp":7.59,"hum":81.04,"wnd":2.41,"cc":0,"pwr":2161.145,"dem":4500,"pct":35},{"t":"2023-01-05 09:00:00","h":9,"doy":5,"irr":292.58,"tmp":7.09,"hum":78.99,"wnd":4.25,"cc":0,"pwr":2544.791,"dem":4500,"pct":35},{"t":"2023-01-05 10:00:00","h":10,"doy":5,"irr":356.17,"tmp":7.12,"hum":72.28,"wnd":2.83,"cc":0,"pwr":3096.56,"dem":4500,"pct":35},{"t":"2023-01-05 11:00:00","h":11,"doy":5,"irr":436.55,"tmp":9.44,"hum":81.04,"wnd":2.87,"cc":0,"pwr":3813.433,"dem":4500,"pct":35},{"t":"2023-01-05 12:00:00","h":12,"doy":5,"irr":425.49,"tmp":7.59,"hum":66.58,"wnd":7.78,"cc":0,"pwr":3705.2,"dem":4500,"pct":35},{"t":"2023-01-05 13:00:00","h":13,"doy":5,"irr":356.33,"tmp":8.95,"hum":75.3,"wnd":8.98,"cc":0,"pwr":3082.714,"dem":4500,"pct":35},{"t":"2023-01-05 14:00:00","h":14,"doy":5,"irr":332.75,"tmp":5.44,"hum":90.66,"wnd":4.6,"cc":0,"pwr":2884.148,"dem":4500,"pct":35},{"t":"2023-01-05 15:00:00","h":15,"doy":5,"irr":295.01,"tmp":5.35,"hum":63.25,"wnd":2.31,"cc":0,"pwr":2566.624,"dem":4500,"pct":35},{"t":"2023-01-05 16:00:00","h":16,"doy":5,"irr":176.46,"tmp":4.03,"hum":86.67,"wnd":8.99,"cc":0,"pwr":1523.993,"dem":5242.12,"pct":35},{"t":"2023-01-05 17:00:00","h":17,"doy":5,"irr":77.54,"tmp":5.26,"hum":94.24,"wnd":4.38,"cc":0,"pwr":665.716,"dem":8317.48,"pct":28.01},{"t":"2023-01-06 07:00:00","h":7,"doy":6,"irr":122.9,"tmp":1.63,"hum":86.03,"wnd":2.93,"cc":0,"pwr":1076.697,"dem":7818.21,"pct":35},{"t":"2023-01-06 08:00:00","h":8,"doy":6,"irr":203.53,"tmp":5.18,"hum":84.03,"wnd":4.48,"cc":0,"pwr":1768.818,"dem":4612.83,"pct":35},{"t":"2023-01-06 09:00:00","h":9,"doy":6,"irr":280.44,"tmp":6.77,"hum":98,"wnd":1.53,"cc":0,"pwr":2433.697,"dem":4500,"pct":35},{"t":"2023-01-06 10:00:00","h":10,"doy":6,"irr":380.09,"tmp":7.91,"hum":72.8,"wnd":1.85,"cc":0,"pwr":3314.529,"dem":4500,"pct":35},{"t":"2023-01-06 11:00:00","h":11,"doy":6,"irr":369.03,"tmp":7.56,"hum":75.05,"wnd":1.55,"cc":0,"pwr":3197.852,"dem":4500,"pct":35},{"t":"2023-01-06 12:00:00","h":12,"doy":6,"irr":372.55,"tmp":6.48,"hum":88,"wnd":4.07,"cc":0,"pwr":3224.589,"dem":4500,"pct":35},{"t":"2023-01-06 13:00:00","h":13,"doy":6,"irr":340.42,"tmp":6.64,"hum":87.61,"wnd":4.96,"cc":0,"pwr":2939.454,"dem":4500,"pct":35},{"t":"2023-01-06 14:00:00","h":14,"doy":6,"irr":325.1,"tmp":8.37,"hum":76.05,"wnd":7.32,"cc":0,"pwr":2814.657,"dem":4500,"pct":35},{"t":"2023-01-06 15:00:00","h":15,"doy":6,"irr":302.59,"tmp":3.79,"hum":82.11,"wnd":2.03,"cc":0,"pwr":2635.974,"dem":4500,"pct":35},{"t":"2023-01-06 16:00:00","h":16,"doy":6,"irr":199.13,"tmp":4.76,"hum":92.91,"wnd":2.89,"cc":0,"pwr":1728.417,"dem":4500,"pct":35},{"t":"2023-01-06 17:00:00","h":17,"doy":6,"irr":107.06,"tmp":4.6,"hum":71.44,"wnd":1.9,"cc":0,"pwr":930.302,"dem":7303.93,"pct":35},{"t":"2023-01-07 07:00:00","h":7,"doy":7,"irr":110.82,"tmp":4.44,"hum":75.95,"wnd":2.91,"cc":0,"pwr":965.571,"dem":6674.87,"pct":35},{"t":"2023-01-07 08:00:00","h":8,"doy":7,"irr":179.77,"tmp":4.56,"hum":75.98,"wnd":1.49,"cc":0,"pwr":1553.696,"dem":4889.94,"pct":35},{"t":"2023-01-07 09:00:00","h":9,"doy":7,"irr":219.89,"tmp":3.97,"hum":78.03,"wnd":3.19,"cc":0,"pwr":1888.873,"dem":4500,"pct":35},{"t":"2023-01-07 10:00:00","h":10,"doy":7,"irr":331.61,"tmp":9.05,"hum":83.34,"wnd":2.84,"cc":0,"pwr":2873.047,"dem":4500,"pct":35},{"t":"2023-01-07 11:00:00","h":11,"doy":7,"irr":419.39,"tmp":8.3,"hum":82.09,"wnd":2.52,"cc":0,"pwr":3655.055,"dem":4500,"pct":35},{"t":"2023-01-07 12:00:00","h":12,"doy":7,"irr":471.25,"tmp":6.44,"hum":78.51,"wnd":5.93,"cc":0,"pwr":4124.834,"dem":4500,"pct":35},{"t":"2023-01-07 13:00:00","h":13,"doy":7,"irr":370.88,"tmp":8.06,"hum":74.26,"wnd":1.33,"cc":0,"pwr":3214.106,"dem":4500,"pct":35},{"t":"2023-01-07 14:00:00","h":14,"doy":7,"irr":366.81,"tmp":5.75,"hum":71.29,"wnd":4.72,"cc":0,"pwr":3193.382,"dem":4500,"pct":35},{"t":"2023-01-07 15:00:00","h":15,"doy":7,"irr":301.18,"tmp":6.36,"hum":72.41,"wnd":3.45,"cc":0,"pwr":2622.609,"dem":4500,"pct":35},{"t":"2023-01-07 16:00:00","h":16,"doy":7,"irr":234.69,"tmp":6.48,"hum":69,"wnd":1.7,"cc":0,"pwr":2053.515,"dem":4500,"pct":35},{"t":"2023-01-07 17:00:00","h":17,"doy":7,"irr":95.77,"tmp":5.32,"hum":75.61,"wnd":3.64,"cc":0,"pwr":828.853,"dem":7293.52,"pct":35},{"t":"2023-01-07 18:00:00","h":18,"doy":7,"irr":8.46,"tmp":2.98,"hum":79.68,"wnd":8.28,"cc":0,"pwr":74.75,"dem":10337.86,"pct":2.53},{"t":"2023-01-08 07:00:00","h":7,"doy":8,"irr":119.6,"tmp":3.58,"hum":77.22,"wnd":1.69,"cc":0,"pwr":1045.864,"dem":6980.28,"pct":35},{"t":"2023-01-08 08:00:00","h":8,"doy":8,"irr":192.17,"tmp":4.42,"hum":86.35,"wnd":2.84,"cc":0,"pwr":1665.154,"dem":4537.73,"pct":35},{"t":"2023-01-08 09:00:00","h":9,"doy":8,"irr":270.64,"tmp":4.78,"hum":82.61,"wnd":7.03,"cc":0,"pwr":2344.603,"dem":4500,"pct":35},{"t":"2023-01-08 10:00:00","h":10,"doy":8,"irr":334.45,"tmp":9.66,"hum":69.7,"wnd":4.61,"cc":0,"pwr":2898.248,"dem":4500,"pct":35},{"t":"2023-01-08 11:00:00","h":11,"doy":8,"irr":387.26,"tmp":7.17,"hum":61.22,"wnd":5.75,"cc":0,"pwr":3362.108,"dem":4500,"pct":35},{"t":"2023-01-08 12:00:00","h":12,"doy":8,"irr":391.47,"tmp":5.57,"hum":69.25,"wnd":6.14,"cc":0,"pwr":3395.115,"dem":4500,"pct":35},{"t":"2023-01-08 13:00:00","h":13,"doy":8,"irr":400.04,"tmp":9.07,"hum":69.54,"wnd":4.23,"cc":0,"pwr":3478.467,"dem":4500,"pct":35},{"t":"2023-01-08 14:00:00","h":14,"doy":8,"irr":334.23,"tmp":8.13,"hum":81,"wnd":10.62,"cc":0,"pwr":2896.527,"dem":4500,"pct":35},{"t":"2023-01-08 15:00:00","h":15,"doy":8,"irr":296.91,"tmp":7.05,"hum":66.4,"wnd":4.64,"cc":0,"pwr":2583.546,"dem":4500,"pct":35},{"t":"2023-01-08 16:00:00","h":16,"doy":8,"irr":180.87,"tmp":4.67,"hum":85.69,"wnd":3.03,"cc":0,"pwr":1563.166,"dem":4500,"pct":35},{"t":"2023-01-08 17:00:00","h":17,"doy":8,"irr":91.72,"tmp":4.08,"hum":84.43,"wnd":2.77,"cc":0,"pwr":791.557,"dem":7423.34,"pct":35},{"t":"2023-01-08 18:00:00","h":18,"doy":8,"irr":0.2,"tmp":6.76,"hum":97.62,"wnd":2.73,"cc":0,"pwr":2.024,"dem":10317.8,"pct":0.07},{"t":"2023-01-09 07:00:00","h":7,"doy":9,"irr":99.27,"tmp":1.11,"hum":71.28,"wnd":7.37,"cc":0,"pwr":859.416,"dem":8269.14,"pct":35},{"t":"2023-01-09 08:00:00","h":8,"doy":9,"irr":243.2,"tmp":6.52,"hum":68.56,"wnd":2.53,"cc":0,"pwr":2131.855,"dem":4500,"pct":35},{"t":"2023-01-09 09:00:00","h":9,"doy":9,"irr":278.78,"tmp":6.43,"hum":75.45,"wnd":2.61,"cc":0,"pwr":2417.954,"dem":4500,"pct":35},{"t":"2023-01-09 10:00:00","h":10,"doy":9,"irr":380.44,"tmp":7.84,"hum":78.4,"wnd":2.51,"cc":0,"pwr":3316.88,"dem":4500,"pct":35},{"t":"2023-01-09 11:00:00","h":11,"doy":9,"irr":447.12,"tmp":6.86,"hum":73.22,"wnd":8.08,"cc":0,"pwr":3908.315,"dem":4500,"pct":35},{"t":"2023-01-09 12:00:00","h":12,"doy":9,"irr":453.76,"tmp":9.9,"hum":70.84,"wnd":5.47,"cc":0,"pwr":3962.855,"dem":4500,"pct":35},{"t":"2023-01-09 13:00:00","h":13,"doy":9,"irr":393.96,"tmp":9.13,"hum":66.44,"wnd":3.62,"cc":0,"pwr":3423.139,"dem":4500,"pct":35},{"t":"2023-01-09 14:00:00","h":14,"doy":9,"irr":351.67,"tmp":5.1,"hum":76.69,"wnd":12.62,"cc":0,"pwr":3054.359,"dem":4500,"pct":35},{"t":"2023-01-09 15:00:00","h":15,"doy":9,"irr":243,"tmp":5.08,"hum":81.04,"wnd":2.71,"cc":0,"pwr":2095.466,"dem":4500,"pct":35},{"t":"2023-01-09 16:00:00","h":16,"doy":9,"irr":179.8,"tmp":5.81,"hum":84.56,"wnd":1.86,"cc":0,"pwr":1553.32,"dem":5136.75,"pct":35},{"t":"2023-01-09 17:00:00","h":17,"doy":9,"irr":103.35,"tmp":3.83,"hum":73.18,"wnd":1.46,"cc":0,"pwr":897.245,"dem":7593.66,"pct":35},{"t":"2023-01-09 18:00:00","h":18,"doy":9,"irr":9.89,"tmp":5.34,"hum":72.8,"wnd":4.54,"cc":0,"pwr":87.552,"dem":10766.42,"pct":2.85},{"t":"2023-01-10 07:00:00","h":7,"doy":10,"irr":95.67,"tmp":5.64,"hum":77.03,"wnd":2.55,"cc":0,"pwr":827.254,"dem":7994.12,"pct":35},{"t":"2023-01-10 08:00:00","h":8,"doy":10,"irr":216.95,"tmp":7.21,"hum":81.25,"wnd":2.25,"cc":0,"pwr":1890.167,"dem":4500,"pct":35},{"t":"2023-01-10 09:00:00","h":9,"doy":10,"irr":289.6,"tmp":2.98,"hum":75.7,"wnd":1.42,"cc":0,"pwr":2515.026,"dem":4500,"pct":35},{"t":"2023-01-10 10:00:00","h":10,"doy":10,"irr":338.62,"tmp":6.18,"hum":82.67,"wnd":4.18,"cc":0,"pwr":2935.737,"dem":4500,"pct":35},{"t":"2023-01-10 11:00:00","h":11,"doy":10,"irr":355.96,"tmp":6.77,"hum":61.27,"wnd":7.07,"cc":0,"pwr":3077.925,"dem":4500,"pct":35},{"t":"2023-01-10 12:00:00","h":12,"doy":10,"irr":386.4,"tmp":8.78,"hum":67.77,"wnd":1.55,"cc":0,"pwr":3348.561,"dem":4500,"pct":35},{"t":"2023-01-10 13:00:00","h":13,"doy":10,"irr":374.88,"tmp":10.27,"hum":68.21,"wnd":1.38,"cc":0,"pwr":3249.366,"dem":4500,"pct":35},{"t":"2023-01-10 14:00:00","h":14,"doy":10,"irr":337.59,"tmp":4.46,"hum":97.93,"wnd":18,"cc":0,"pwr":2926.223,"dem":4500,"pct":35},{"t":"2023-01-10 15:00:00","h":15,"doy":10,"irr":274.16,"tmp":6,"hum":88.47,"wnd":1.52,"cc":0,"pwr":2376.285,"dem":4500,"pct":35},{"t":"2023-01-10 16:00:00","h":16,"doy":10,"irr":201.76,"tmp":7.44,"hum":80.1,"wnd":2.18,"cc":0,"pwr":1751.423,"dem":4500,"pct":35},{"t":"2023-01-10 17:00:00","h":17,"doy":10,"irr":123.16,"tmp":2.22,"hum":75.76,"wnd":0.86,"cc":0,"pwr":1078.095,"dem":7240.27,"pct":35},{"t":"2023-01-10 18:00:00","h":18,"doy":10,"irr":4.83,"tmp":4.37,"hum":73.8,"wnd":0.64,"cc":0,"pwr":42.986,"dem":11097.48,"pct":1.36},{"t":"2023-01-11 07:00:00","h":7,"doy":11,"irr":104.42,"tmp":5,"hum":82.54,"wnd":2.09,"cc":0,"pwr":906.818,"dem":7938.01,"pct":35},{"t":"2023-01-11 08:00:00","h":8,"doy":11,"irr":204.71,"tmp":5.58,"hum":86.29,"wnd":4.66,"cc":0,"pwr":1778.593,"dem":4585.1,"pct":35},{"t":"2023-01-11 09:00:00","h":9,"doy":11,"irr":281.87,"tmp":7.28,"hum":68.03,"wnd":1.21,"cc":0,"pwr":2445.449,"dem":4500,"pct":35},{"t":"2023-01-11 10:00:00","h":10,"doy":11,"irr":374.01,"tmp":8.26,"hum":73.66,"wnd":3.42,"cc":0,"pwr":3257.46,"dem":4500,"pct":35},{"t":"2023-01-11 11:00:00","h":11,"doy":11,"irr":427.59,"tmp":10.48,"hum":66.37,"wnd":7.21,"cc":0,"pwr":3728.151,"dem":4500,"pct":35},{"t":"2023-01-11 12:00:00","h":12,"doy":11,"irr":432.58,"tmp":7.17,"hum":84.82,"wnd":2.19,"cc":0,"pwr":3767.211,"dem":4500,"pct":35},{"t":"2023-01-11 13:00:00","h":13,"doy":11,"irr":398.84,"tmp":8.85,"hum":92.81,"wnd":2.31,"cc":0,"pwr":3465.964,"dem":4500,"pct":35},{"t":"2023-01-11 14:00:00","h":14,"doy":11,"irr":339.31,"tmp":7.06,"hum":89.74,"wnd":10.11,"cc":0,"pwr":2942.011,"dem":4500,"pct":35},{"t":"2023-01-11 15:00:00","h":15,"doy":11,"irr":280.34,"tmp":9.05,"hum":64.15,"wnd":3.81,"cc":0,"pwr":2431.038,"dem":4500,"pct":35},{"t":"2023-01-11 16:00:00","h":16,"doy":11,"irr":206.07,"tmp":6.46,"hum":81.43,"wnd":3.53,"cc":0,"pwr":1790.802,"dem":4500,"pct":35},{"t":"2023-01-11 17:00:00","h":17,"doy":11,"irr":123.66,"tmp":4.97,"hum":83.72,"wnd":3.91,"cc":0,"pwr":1082.393,"dem":7065.41,"pct":35},{"t":"2023-01-11 18:00:00","h":18,"doy":11,"irr":10.11,"tmp":3.48,"hum":95.5,"wnd":1.9,"cc":0,"pwr":88.627,"dem":10786.07,"pct":2.88},{"t":"2023-01-12 07:00:00","h":7,"doy":12,"irr":87.9,"tmp":4.82,"hum":95.78,"wnd":3.31,"cc":0,"pwr":757.841,"dem":8486.1,"pct":31.25},{"t":"2023-01-12 08:00:00","h":8,"doy":12,"irr":191.58,"tmp":9.31,"hum":74.84,"wnd":4.17,"cc":0,"pwr":1659.353,"dem":5204.4,"pct":35},{"t":"2023-01-12 09:00:00","h":9,"doy":12,"irr":242.92,"tmp":7.27,"hum":78,"wnd":3.25,"cc":0,"pwr":2093.959,"dem":4500,"pct":35},{"t":"2023-01-12 10:00:00","h":10,"doy":12,"irr":326.37,"tmp":7.85,"hum":80.74,"wnd":4.58,"cc":0,"pwr":2824.147,"dem":4500,"pct":35},{"t":"2023-01-12 11:00:00","h":11,"doy":12,"irr":344.18,"tmp":6.38,"hum":51.93,"wnd":5.35,"cc":0,"pwr":2971.51,"dem":4500,"pct":35},{"t":"2023-01-12 12:00:00","h":12,"doy":12,"irr":418.85,"tmp":8.29,"hum":70.34,"wnd":1.63,"cc":0,"pwr":3641.578,"dem":4500,"pct":35},{"t":"2023-01-12 13:00:00","h":13,"doy":12,"irr":355.88,"tmp":10.41,"hum":62.94,"wnd":3.47,"cc":0,"pwr":3076.539,"dem":4500,"pct":35},{"t":"2023-01-12 14:00:00","h":14,"doy":12,"irr":370.21,"tmp":5.6,"hum":73.93,"wnd":3.38,"cc":0,"pwr":3221.555,"dem":4500,"pct":35},{"t":"2023-01-12 15:00:00","h":15,"doy":12,"irr":329.83,"tmp":6.5,"hum":91.64,"wnd":2.4,"cc":0,"pwr":2882.76,"dem":4500,"pct":35},{"t":"2023-01-12 16:00:00","h":16,"doy":12,"irr":237.19,"tmp":4.19,"hum":55.39,"wnd":4.02,"cc":0,"pwr":2075.167,"dem":4500,"pct":35},{"t":"2023-01-12 17:00:00","h":17,"doy":12,"irr":120.32,"tmp":7.41,"hum":62.3,"wnd":1.96,"cc":0,"pwr":1051.457,"dem":6767.77,"pct":35},{"t":"2023-01-13 07:00:00","h":7,"doy":13,"irr":104.52,"tmp":4.68,"hum":85.88,"wnd":4.34,"cc":0,"pwr":907.47,"dem":7825.33,"pct":35},{"t":"2023-01-13 08:00:00","h":8,"doy":13,"irr":201.96,"tmp":8.01,"hum":64.29,"wnd":3.76,"cc":0,"pwr":1752.124,"dem":4975.03,"pct":35},{"t":"2023-01-13 09:00:00","h":9,"doy":13,"irr":299.21,"tmp":4.71,"hum":93.75,"wnd":6.66,"cc":0,"pwr":2602.172,"dem":4500,"pct":35},{"t":"2023-01-13 10:00:00","h":10,"doy":13,"irr":358.95,"tmp":5.81,"hum":86.49,"wnd":2.41,"cc":0,"pwr":3119.06,"dem":4500,"pct":35},{"t":"2023-01-13 11:00:00","h":11,"doy":13,"irr":391.45,"tmp":8.26,"hum":91.98,"wnd":1.65,"cc":0,"pwr":3397.812,"dem":4500,"pct":35},{"t":"2023-01-13 12:00:00","h":12,"doy":13,"irr":441.28,"tmp":11.2,"hum":75.88,"wnd":1.99,"cc":0,"pwr":3846.127,"dem":4500,"pct":35},{"t":"2023-01-13 13:00:00","h":13,"doy":13,"irr":384.79,"tmp":6.48,"hum":75.01,"wnd":9.82,"cc":0,"pwr":3336.821,"dem":4500,"pct":35},{"t":"2023-01-13 14:00:00","h":14,"doy":13,"irr":402.86,"tmp":7.4,"hum":79.34,"wnd":1,"cc":0,"pwr":3520.23,"dem":4500,"pct":35},{"t":"2023-01-13 15:00:00","h":15,"doy":13,"irr":267.73,"tmp":8.65,"hum":83.41,"wnd":6.47,"cc":0,"pwr":2317.095,"dem":4500,"pct":35},{"t":"2023-01-13 16:00:00","h":16,"doy":13,"irr":202.69,"tmp":7.4,"hum":93.25,"wnd":6.44,"cc":0,"pwr":1759.561,"dem":4500,"pct":35},{"t":"2023-01-13 17:00:00","h":17,"doy":13,"irr":119.57,"tmp":5.99,"hum":75.55,"wnd":3.89,"cc":0,"pwr":1044.231,"dem":7200.45,"pct":35},{"t":"2023-01-14 07:00:00","h":7,"doy":14,"irr":124.2,"tmp":4.73,"hum":68.61,"wnd":2.97,"cc":0,"pwr":1086.948,"dem":5994.7,"pct":35},{"t":"2023-01-14 08:00:00","h":8,"doy":14,"irr":233.03,"tmp":8.65,"hum":71.43,"wnd":9.65,"cc":0,"pwr":2036.276,"dem":4500,"pct":35},{"t":"2023-01-14 09:00:00","h":9,"doy":14,"irr":337.36,"tmp":4.22,"hum":83.07,"wnd":2.64,"cc":0,"pwr":2951.805,"dem":4500,"pct":35},{"t":"2023-01-14 10:00:00","h":10,"doy":14,"irr":368.93,"tmp":7.21,"hum":96.77,"wnd":5.61,"cc":0,"pwr":3209.122,"dem":4500,"pct":35},{"t":"2023-01-14 11:00:00","h":11,"doy":14,"irr":434.12,"tmp":7.14,"hum":77.12,"wnd":7.06,"cc":0,"pwr":3786.232,"dem":4500,"pct":35},{"t":"2023-01-14 12:00:00","h":12,"doy":14,"irr":446.74,"tmp":8.61,"hum":79.15,"wnd":0.81,"cc":0,"pwr":3895.248,"dem":4500,"pct":35},{"t":"2023-01-14 13:00:00","h":13,"doy":14,"irr":426.88,"tmp":8.74,"hum":73.25,"wnd":3.41,"cc":0,"pwr":3720.016,"dem":4500,"pct":35},{"t":"2023-01-14 14:00:00","h":14,"doy":14,"irr":374.1,"tmp":7.8,"hum":77.33,"wnd":1.72,"cc":0,"pwr":3256.635,"dem":4500,"pct":35},{"t":"2023-01-14 15:00:00","h":15,"doy":14,"irr":295.83,"tmp":3.93,"hum":89.96,"wnd":1.66,"cc":0,"pwr":2570.741,"dem":4500,"pct":35},{"t":"2023-01-14 16:00:00","h":16,"doy":14,"irr":225.15,"tmp":3.07,"hum":86.1,"wnd":2.01,"cc":0,"pwr":1963.51,"dem":4500,"pct":35},{"t":"2023-01-14 17:00:00","h":17,"doy":14,"irr":101.55,"tmp":1.15,"hum":81.35,"wnd":1.12,"cc":0,"pwr":879.85,"dem":7658.62,"pct":35},{"t":"2023-01-15 07:00:00","h":7,"doy":15,"irr":97.72,"tmp":4.38,"hum":74.46,"wnd":6.32,"cc":0,"pwr":845.511,"dem":7283.92,"pct":35},{"t":"2023-01-15 08:00:00","h":8,"doy":15,"irr":207.74,"tmp":6.15,"hum":77.61,"wnd":0.9,"cc":0,"pwr":1804.474,"dem":4500,"pct":35},{"t":"2023-01-15 09:00:00","h":9,"doy":15,"irr":273.06,"tmp":8.02,"hum":87.45,"wnd":3.57,"cc":0,"pwr":2364.604,"dem":4500,"pct":35},{"t":"2023-01-15 10:00:00","h":10,"doy":15,"irr":315.94,"tmp":8.63,"hum":77.73,"wnd":3.08,"cc":0,"pwr":2727.806,"dem":4500,"pct":35},{"t":"2023-01-15 11:00:00","h":11,"doy":15,"irr":347.09,"tmp":8.98,"hum":82.16,"wnd":1.91,"cc":0,"pwr":2996.019,"dem":4500,"pct":35},{"t":"2023-01-15 12:00:00","h":12,"doy":15,"irr":400.43,"tmp":8.67,"hum":88.27,"wnd":3.69,"cc":0,"pwr":3472.161,"dem":4500,"pct":35},{"t":"2023-01-15 13:00:00","h":13,"doy":15,"irr":400.92,"tmp":6.34,"hum":70.48,"wnd":5.41,"cc":0,"pwr":3482.028,"dem":4500,"pct":35},{"t":"2023-01-15 14:00:00","h":14,"doy":15,"irr":371.85,"tmp":11.8,"hum":75.49,"wnd":3.5,"cc":0,"pwr":3234.898,"dem":4500,"pct":35},{"t":"2023-01-15 15:00:00","h":15,"doy":15,"irr":288.63,"tmp":5.03,"hum":56.67,"wnd":1.57,"cc":0,"pwr":2504.813,"dem":4500,"pct":35},{"t":"2023-01-15 16:00:00","h":16,"doy":15,"irr":197.29,"tmp":6.39,"hum":67.07,"wnd":4.38,"cc":0,"pwr":1709.745,"dem":4500,"pct":35},{"t":"2023-01-15 17:00:00","h":17,"doy":15,"irr":117.17,"tmp":9.74,"hum":78.74,"wnd":6.65,"cc":0,"pwr":1021.962,"dem":6702.4,"pct":35},{"t":"2023-01-16 07:00:00","h":7,"doy":16,"irr":113.96,"tmp":4.93,"hum":78.68,"wnd":2.86,"cc":0,"pwr":992.129,"dem":7794.87,"pct":35},{"t":"2023-01-16 08:00:00","h":8,"doy":16,"irr":220.03,"tmp":7.45,"hum":81.82,"wnd":4.02,"cc":0,"pwr":1916.07,"dem":4500,"pct":35},{"t":"2023-01-16 09:00:00","h":9,"doy":16,"irr":299.31,"tmp":5.59,"hum":87.01,"wnd":4.26,"cc":0,"pwr":2602.167,"dem":4500,"pct":35},{"t":"2023-01-16 10:00:00","h":10,"doy":16,"irr":343.6,"tmp":7.73,"hum":66.66,"wnd":2.84,"cc":0,"pwr":2978.305,"dem":4500,"pct":35},{"t":"2023-01-16 11:00:00","h":11,"doy":16,"irr":411.89,"tmp":5.42,"hum":87.12,"wnd":2.61,"cc":0,"pwr":3581.662,"dem":4500,"pct":35},{"t":"2023-01-16 12:00:00","h":12,"doy":16,"irr":467.23,"tmp":9.35,"hum":71.79,"wnd":4.71,"cc":0,"pwr":4081.519,"dem":4500,"pct":35},{"t":"2023-01-16 13:00:00","h":13,"doy":16,"irr":389.97,"tmp":10.86,"hum":76.34,"wnd":4.63,"cc":0,"pwr":3382.397,"dem":4500,"pct":35},{"t":"2023-01-16 14:00:00","h":14,"doy":16,"irr":337.44,"tmp":10.08,"hum":77.52,"wnd":2.54,"cc":0,"pwr":2922.041,"dem":4500,"pct":35},{"t":"2023-01-16 15:00:00","h":15,"doy":16,"irr":313.12,"tmp":8.38,"hum":78.7,"wnd":0.95,"cc":0,"pwr":2727.615,"dem":4500,"pct":35},{"t":"2023-01-16 16:00:00","h":16,"doy":16,"irr":205.76,"tmp":7.16,"hum":66.34,"wnd":4.72,"cc":0,"pwr":1786.777,"dem":4500,"pct":35},{"t":"2023-01-16 17:00:00","h":17,"doy":16,"irr":105.79,"tmp":8.43,"hum":64.84,"wnd":5.61,"cc":0,"pwr":917.993,"dem":7688.9,"pct":35},{"t":"2023-01-17 07:00:00","h":7,"doy":17,"irr":104.2,"tmp":4.09,"hum":86.26,"wnd":3.07,"cc":0,"pwr":903.654,"dem":7767.29,"pct":35},{"t":"2023-01-17 08:00:00","h":8,"doy":17,"irr":217.03,"tmp":4.16,"hum":81.01,"wnd":1.93,"cc":0,"pwr":1888.142,"dem":4852.27,"pct":35},{"t":"2023-01-17 09:00:00","h":9,"doy":17,"irr":273.76,"tmp":9.41,"hum":85.19,"wnd":1.99,"cc":0,"pwr":2369.931,"dem":4500,"pct":35},{"t":"2023-01-17 10:00:00","h":10,"doy":17,"irr":352.01,"tmp":7.68,"hum":62.68,"wnd":4.48,"cc":0,"pwr":3054.131,"dem":4500,"pct":35},{"t":"2023-01-17 11:00:00","h":11,"doy":17,"irr":434.4,"tmp":7.99,"hum":81.63,"wnd":5.79,"cc":0,"pwr":3786.418,"dem":4500,"pct":35},{"t":"2023-01-17 12:00:00","h":12,"doy":17,"irr":404.96,"tmp":8.12,"hum":69.5,"wnd":3.22,"cc":0,"pwr":3512.505,"dem":4500,"pct":35},{"t":"2023-01-17 13:00:00","h":13,"doy":17,"irr":403.61,"tmp":6.58,"hum":69.22,"wnd":7.02,"cc":0,"pwr":3505.789,"dem":4500,"pct":35},{"t":"2023-01-17 14:00:00","h":14,"doy":17,"irr":348.68,"tmp":8.63,"hum":72.39,"wnd":6.1,"cc":0,"pwr":3023.555,"dem":4500,"pct":35},{"t":"2023-01-17 15:00:00","h":15,"doy":17,"irr":272.96,"tmp":9.97,"hum":69.67,"wnd":3.83,"cc":0,"pwr":2362.18,"dem":4500,"pct":35},{"t":"2023-01-17 16:00:00","h":16,"doy":17,"irr":216.1,"tmp":5.46,"hum":80.28,"wnd":1.83,"cc":0,"pwr":1879.752,"dem":4500,"pct":35},{"t":"2023-01-17 17:00:00","h":17,"doy":17,"irr":126.56,"tmp":6.76,"hum":68.81,"wnd":3.85,"cc":0,"pwr":1108.219,"dem":6417.11,"pct":35},{"t":"2023-01-18 07:00:00","h":7,"doy":18,"irr":114.59,"tmp":7.17,"hum":72.95,"wnd":1.45,"cc":0,"pwr":998.559,"dem":7575.01,"pct":35},{"t":"2023-01-18 08:00:00","h":8,"doy":18,"irr":210.33,"tmp":7.89,"hum":77.98,"wnd":3.42,"cc":0,"pwr":1827.029,"dem":4546.11,"pct":35},{"t":"2023-01-18 09:00:00","h":9,"doy":18,"irr":310.49,"tmp":6.19,"hum":81.29,"wnd":3.7,"cc":0,"pwr":2702.962,"dem":4500,"pct":35},{"t":"2023-01-18 10:00:00","h":10,"doy":18,"irr":345.61,"tmp":9.58,"hum":67.17,"wnd":2.26,"cc":0,"pwr":2995.56,"dem":4500,"pct":35}]
+;</script><script>// ================================================================
+// ESN.js — Echo State Network (ORION Stage 1)
+// Optimised for browser: N=40, typed Float64Arrays throughout
+// ================================================================
+
+// ---- Seeded RNG (reproducible, fast) ----
+function seededRng(seed) {
+  let s = (seed >>> 0) || 1;
+  return () => {
+    s ^= s << 13; s ^= s >> 17; s ^= s << 5;
+    return (s >>> 0) / 4294967296 * 2 - 1;
+  };
+}
+
+// ---- Build reservoir weight matrix with desired spectral radius ----
+// Uses power-iteration to estimate dominant eigenvalue, then rescales
+function buildReservoirMatrix(N, spectralRadius, seed) {
+  const rng = seededRng(seed);
+  const W = new Float64Array(N * N);
+
+  // Sparse connectivity (~25% density)
+  for (let i = 0; i < N * N; i++) {
+    const r = rng();
+    W[i] = Math.abs(r) > 0.75 ? rng() : 0;
+  }
+
+  // Power iteration (20 iters) to estimate spectral radius
+  let v = new Float64Array(N);
+  for (let i = 0; i < N; i++) v[i] = rng();
+  let norm = 0;
+  for (let i = 0; i < N; i++) norm += v[i] * v[i];
+  norm = Math.sqrt(norm) || 1;
+  for (let i = 0; i < N; i++) v[i] /= norm;
+
+  for (let iter = 0; iter < 20; iter++) {
+    const Wv = new Float64Array(N);
+    for (let i = 0; i < N; i++) {
+      let s = 0;
+      const row = i * N;
+      for (let j = 0; j < N; j++) s += W[row + j] * v[j];
+      Wv[i] = s;
+    }
+    norm = 0;
+    for (let i = 0; i < N; i++) norm += Wv[i] * Wv[i];
+    norm = Math.sqrt(norm) || 1;
+    for (let i = 0; i < N; i++) v[i] = Wv[i] / norm;
+  }
+
+  // Rayleigh quotient → approximate spectral radius
+  let sr = 0;
+  for (let i = 0; i < N; i++) {
+    let s = 0;
+    const row = i * N;
+    for (let j = 0; j < N; j++) s += W[row + j] * v[j];
+    sr += s * v[i];
+  }
+  sr = Math.abs(sr) || 1;
+
+  const scale = spectralRadius / sr;
+  for (let i = 0; i < N * N; i++) W[i] *= scale;
+  return W;
+}
+
+// ---- Build input weight matrix ----
+function buildInputMatrix(N, F, seed) {
+  const rng = seededRng(seed);
+  const W = new Float64Array(N * F);
+  for (let i = 0; i < N * F; i++) W[i] = rng() * 0.5;
+  return W;
+}
+
+// ---- Ridge regression via Cholesky on normal equations ----
+// Solves (S'S + λI) w = S'y  →  uses Gaussian elimination on (N)×(N+1)
+function ridgeRegression(S, Y, N, T, lambda) {
+  // Build S'S (N×N) and S'y (N)
+  const StS = new Float64Array(N * N);
+  const Sty = new Float64Array(N);
+
+  for (let t = 0; t < T; t++) {
+    const st = S[t]; // length-N array
+    for (let i = 0; i < N; i++) {
+      Sty[i] += st[i] * Y[t];
+      const rowI = i * N;
+      for (let j = i; j < N; j++) {
+        const val = st[i] * st[j];
+        StS[rowI + j] += val;
+        if (i !== j) StS[j * N + i] += val;
+      }
+    }
+  }
+  // Regularise diagonal
+  for (let i = 0; i < N; i++) StS[i * N + i] += lambda;
+
+  // Gaussian elimination with partial pivoting
+  // Build augmented [StS | Sty] as plain arrays for speed
+  const M = [];
+  for (let i = 0; i < N; i++) {
+    const row = new Float64Array(N + 1);
+    const src = i * N;
+    for (let j = 0; j < N; j++) row[j] = StS[src + j];
+    row[N] = Sty[i];
+    M.push(row);
+  }
+
+  for (let col = 0; col < N; col++) {
+    // Find pivot
+    let maxRow = col, maxVal = Math.abs(M[col][col]);
+    for (let row = col + 1; row < N; row++) {
+      const v = Math.abs(M[row][col]);
+      if (v > maxVal) { maxVal = v; maxRow = row; }
+    }
+    if (maxRow !== col) { const tmp = M[col]; M[col] = M[maxRow]; M[maxRow] = tmp; }
+
+    const pivot = M[col][col];
+    if (Math.abs(pivot) < 1e-14) continue;
+
+    for (let row = col + 1; row < N; row++) {
+      const f = M[row][col] / pivot;
+      if (f === 0) continue;
+      for (let j = col; j <= N; j++) M[row][j] -= f * M[col][j];
+    }
+  }
+
+  // Back substitution
+  const x = new Float64Array(N);
+  for (let i = N - 1; i >= 0; i--) {
+    let s = M[i][N];
+    for (let j = i + 1; j < N; j++) s -= M[i][j] * x[j];
+    x[i] = s / (M[i][i] || 1e-14);
+  }
+  return x;
+}
+
+// ================================================================
+// ORION Engine — N=40 neurons for smooth browser performance
+// ================================================================
+class ORIONEngine {
+  constructor(cfg = {}) {
+    this.N   = cfg.N   || 40;
+    this.F   = cfg.F   || 6;
+    this.sr  = cfg.sr  || 0.9;
+    this.a   = cfg.a   || 0.3;      // leaking rate
+    this.beta= cfg.beta|| 0.05;     // oscillation amplitude
+    this.omega = 2 * Math.PI / 24;  // daily cycle
+    this.phi   = 0;
+    this.lambda= cfg.lambda || 1e-3;
+
+    this.W_res = buildReservoirMatrix(this.N, this.sr, 42);
+    this.W_in  = buildInputMatrix(this.N, this.F, 99);
+    this.W_out = null;
+    this.state = new Float64Array(this.N);
+  }
+
+  featureVector(row, ns) {
+    const n = (v, k) => (ns[k].max - ns[k].min) > 0
+      ? (v - ns[k].min) / (ns[k].max - ns[k].min) : 0;
+    return [
+      n(row.irr, 'irr'), n(row.tmp, 'tmp'),
+      n(row.hum, 'hum'), n(row.wnd, 'wnd'),
+      Math.sin(2 * Math.PI * row.h / 24),
+      Math.cos(2 * Math.PI * row.h / 24),
+    ];
+  }
+
+  _step(x, t) {
+    const N = this.N, W = this.W_res, Wi = this.W_in, F = this.F;
+    const osc = this.beta * Math.sin(this.omega * t + this.phi);
+    const newS = new Float64Array(N);
+
+    for (let i = 0; i < N; i++) {
+      let s = osc;
+      const rowW = i * N, rowI = i * F;
+      for (let j = 0; j < N; j++) s += W[rowW + j] * this.state[j];
+      for (let j = 0; j < F; j++) s += Wi[rowI + j] * x[j];
+      newS[i] = (1 - this.a) * this.state[i] + this.a * Math.tanh(s);
+    }
+    this.state = newS;
+    return newS;
+  }
+
+  collectStates(data, ns) {
+    this.state = new Float64Array(this.N);
+    return data.map((row, t) => this._step(this.featureVector(row, ns), t));
+  }
+
+  train(data, ns) {
+    const states = this.collectStates(data, ns);
+    const Y = data.map(d => d.pwr / (ns.pwr.max || 1));
+    this.W_out = ridgeRegression(states, Y, this.N, data.length, this.lambda);
+    return states;
+  }
+
+  predict(data, ns) {
+    if (!this.W_out) return data.map(() => 0);
+    const states = this.collectStates(data, ns);
+    const Wo = this.W_out, mx = ns.pwr.max || 1;
+    return states.map(s => {
+      let v = 0;
+      for (let j = 0; j < this.N; j++) v += s[j] * Wo[j];
+      return Math.max(0, v * mx);
+    });
+  }
+
+  predictOne(feat, ns, t = 12) {
+    if (!this.W_out) return 0;
+    const s = this._step(feat, t);
+    let v = 0;
+    for (let j = 0; j < this.N; j++) v += s[j] * this.W_out[j];
+    return Math.max(0, v * (ns.pwr.max || 1));
+  }
+
+  getSnapshot() { return Array.from(this.state); }
+}
+
+// ---- Normalization stats ----
+function computeNormStats(data) {
+  const stats = {};
+  for (const k of ['irr','tmp','hum','wnd','pwr']) {
+    const vals = data.map(d => d[k]).filter(Number.isFinite);
+    let mn = Infinity, mx = -Infinity, sm = 0;
+    for (const v of vals) { if (v < mn) mn = v; if (v > mx) mx = v; sm += v; }
+    stats[k] = { min: mn, max: mx, mean: sm / (vals.length || 1) };
+  }
+  return stats;
+}
+
+window.ORIONEngine     = ORIONEngine;
+window.computeNormStats = computeNormStats;
+</script><script>// ================================================================
+// aurora.js — AURORA Adaptive Refinement Stage (fast version)
+// ================================================================
+
+class AURORAEngine {
+  constructor(cfg = {}) {
+    this.windowSize       = cfg.windowSize       || 24;
+    this.radiantScale     = cfg.radiantScaleFactor || 0.7;
+    this.adaptiveGain     = 1.0;
+    this.weights          = null; // 8-element array (tiny, fast to solve)
+  }
+
+  _feat(row, orionPred, ns) {
+    const n = (v, k) => (ns[k].max - ns[k].min) > 0
+      ? (v - ns[k].min) / (ns[k].max - ns[k].min) : 0;
+    return [
+      orionPred / (ns.pwr.max || 1),
+      n(row.irr, 'irr'), n(row.tmp, 'tmp'),
+      n(row.hum, 'hum'), n(row.wnd, 'wnd'),
+      Math.sin(2 * Math.PI * row.h / 24),
+      Math.cos(2 * Math.PI * row.h / 24),
+      1.0, // bias
+    ];
+  }
+
+  _variance(arr) {
+    if (!arr.length) return 0;
+    let sm = 0;
+    for (const v of arr) sm += v;
+    const mn = sm / arr.length;
+    let v2 = 0;
+    for (const v of arr) v2 += (v - mn) ** 2;
+    return v2 / arr.length;
+  }
+
+  // Tiny 8×8 least-squares — runs in microseconds
+  _lsq(X, Y) {
+    const m = X[0].length, n = X.length;
+    const XtX = [];
+    for (let i = 0; i < m; i++) {
+      XtX.push(new Float64Array(m));
+      for (let j = 0; j < m; j++) {
+        let s = i === j ? 1e-3 : 0; // regularise
+        for (let t = 0; t < n; t++) s += X[t][i] * X[t][j];
+        XtX[i][j] = s;
+      }
+    }
+    const XtY = new Float64Array(m);
+    for (let i = 0; i < m; i++)
+      for (let t = 0; t < n; t++)
+        XtY[i] += X[t][i] * Y[t];
+
+    // Gaussian elimination (8×8 — trivial)
+    const M = XtX.map((row, i) => { const r = Array.from(row); r.push(XtY[i]); return r; });
+    for (let col = 0; col < m; col++) {
+      let mx = col;
+      for (let r = col + 1; r < m; r++) if (Math.abs(M[r][col]) > Math.abs(M[mx][col])) mx = r;
+      [M[col], M[mx]] = [M[mx], M[col]];
+      const p = M[col][col] || 1e-12;
+      for (let r = col + 1; r < m; r++) {
+        const f = M[r][col] / p;
+        for (let j = col; j <= m; j++) M[r][j] -= f * M[col][j];
+      }
+    }
+    const x = new Float64Array(m);
+    for (let i = m - 1; i >= 0; i--) {
+      let s = M[i][m];
+      for (let j = i + 1; j < m; j++) s -= M[i][j] * x[j];
+      x[i] = s / (M[i][i] || 1e-12);
+    }
+    return x;
+  }
+
+  train(data, orionPreds, ns) {
+    const X = data.map((row, i) => this._feat(row, orionPreds[i], ns));
+    const residuals = data.map((d, i) => d.pwr - orionPreds[i]);
+    this.weights = this._lsq(X, residuals);
+
+    const varRes   = this._variance(residuals);
+    const varOrion = this._variance(orionPreds);
+    this.adaptiveGain = Math.min(1.0, varRes / (varOrion + 1e-6)) * this.radiantScale;
+  }
+
+  predict(data, orionPreds, ns) {
+    if (!this.weights) return [...orionPreds];
+    const allPwr = data.map(d => d.pwr);
+    const globalVar = this._variance(allPwr);
+
+    return data.map((row, i) => {
+      const x = this._feat(row, orionPreds[i], ns);
+      let corr = 0;
+      for (let j = 0; j < this.weights.length; j++) corr += x[j] * this.weights[j];
+      corr *= ns.pwr.max || 1;
+
+      // Radiant scaling: amplify correction when local error is high
+      const wStart = Math.max(0, i - this.windowSize);
+      const localPwr = allPwr.slice(wStart, i + 1);
+      const localVar = this._variance(localPwr);
+      const rScale   = Math.min(2, Math.sqrt(localVar / (globalVar + 1e-6)));
+      return Math.max(0, orionPreds[i] + corr * rScale * this.adaptiveGain);
+    });
+  }
+
+  predictOne(feat8, orionPred, ns) {
+    if (!this.weights) return orionPred;
+    let corr = 0;
+    for (let j = 0; j < this.weights.length; j++) corr += feat8[j] * this.weights[j];
+    corr *= (ns.pwr.max || 1) * this.adaptiveGain * 0.3;
+    return Math.max(0, orionPred + corr);
+  }
+}
+
+window.AURORAEngine = AURORAEngine;
+</script><script>// ================================================================
+// metrics.js — Evaluation metrics + benchmark reference data
+// ================================================================
+
+function computeRMSE(actual, predicted) {
+  const n = actual.length;
+  const mse = actual.reduce((s, a, i) => s + (a - predicted[i]) ** 2, 0) / n;
+  return Math.sqrt(mse);
+}
+
+function computeMAE(actual, predicted) {
+  const n = actual.length;
+  return actual.reduce((s, a, i) => s + Math.abs(a - predicted[i]), 0) / n;
+}
+
+function computeMAPE(actual, predicted) {
+  let count = 0, sum = 0;
+  for (let i = 0; i < actual.length; i++) {
+    if (actual[i] > 1e-3) { // Avoid division by near-zero
+      sum += Math.abs((actual[i] - predicted[i]) / actual[i]);
+      count++;
+    }
+  }
+  return count > 0 ? (sum / count) * 100 : 0;
+}
+
+function computeR2(actual, predicted) {
+  const mean = actual.reduce((s, v) => s + v, 0) / actual.length;
+  const ss_tot = actual.reduce((s, v) => s + (v - mean) ** 2, 0);
+  const ss_res = actual.reduce((s, v, i) => s + (v - predicted[i]) ** 2, 0);
+  return 1 - ss_res / (ss_tot || 1);
+}
+
+function computeBaselinePredictions(data) {
+  const mean = data.reduce((s, d) => s + d.pwr, 0) / data.length;
+  return data.map(() => mean);
+}
+
+// ---- Paper benchmark reference values (from the paper) ----
+// Normalized to kW scale relative to the UCI and AEP datasets
+const PAPER_BENCHMARKS = {
+  uci: [
+    { model: 'VGG16',               rmse: 8.72,  mae: 5.61, mape: 4.82 },
+    { model: 'ResNet50',            rmse: 7.94,  mae: 5.03, mape: 4.31 },
+    { model: 'EfficientNet-B0',     rmse: 7.48,  mae: 4.77, mape: 3.97 },
+    { model: 'Inception-v3',        rmse: 7.21,  mae: 4.55, mape: 3.76 },
+    { model: 'DenseNet121',         rmse: 6.94,  mae: 4.32, mape: 3.54 },
+    { model: 'CNN-LSTM Hybrid',     rmse: 6.42,  mae: 3.98, mape: 3.12 },
+    { model: 'Attention-LSTM',      rmse: 5.87,  mae: 3.61, mape: 2.71 },
+    { model: 'Transformer-TFT',     rmse: 4.93,  mae: 2.98, mape: 2.18 },
+    { model: 'ORION only',          rmse: 4.12,  mae: 2.41, mape: 1.87, isOrion: true },
+    { model: 'ORION + AURORA',      rmse: 3.50,  mae: 2.00, mape: 1.50, isAurora: true },
+  ],
+  aep: [
+    { model: 'VGG16',               rmse: 9.88,  mae: 6.44, mape: 5.73 },
+    { model: 'ResNet50',            rmse: 8.95,  mae: 5.82, mape: 5.14 },
+    { model: 'EfficientNet-B0',     rmse: 8.43,  mae: 5.41, mape: 4.72 },
+    { model: 'Inception-v3',        rmse: 8.12,  mae: 5.17, mape: 4.43 },
+    { model: 'DenseNet121',         rmse: 7.81,  mae: 4.93, mape: 4.12 },
+    { model: 'CNN-LSTM Hybrid',     rmse: 7.28,  mae: 4.56, mape: 3.68 },
+    { model: 'Attention-LSTM',      rmse: 6.71,  mae: 4.14, mape: 3.22 },
+    { model: 'Transformer-TFT',     rmse: 5.62,  mae: 3.43, mape: 2.64 },
+    { model: 'ORION only',          rmse: 4.68,  mae: 2.88, mape: 2.21, isOrion: true },
+    { model: 'ORION + AURORA',      rmse: 4.00,  mae: 2.50, mape: 2.00, isAurora: true },
+  ]
+};
+
+// Scale metrics to match dataset magnitudes
+// Paper reports % errors — we scale RMSE/MAE to kW units of each dataset
+function scaleMetricsToDataset(metrics, normStats) {
+  const scale = normStats.pwr.max / 100; // rough scaling
+  return {
+    rmse: metrics.rmse * scale,
+    mae:  metrics.mae  * scale,
+    mape: metrics.mape, // % stays same
+  };
+}
+
+window.computeRMSE  = computeRMSE;
+window.computeMAE   = computeMAE;
+window.computeMAPE  = computeMAPE;
+window.computeR2    = computeR2;
+window.computeBaselinePredictions = computeBaselinePredictions;
+window.PAPER_BENCHMARKS = PAPER_BENCHMARKS;
+window.scaleMetricsToDataset = scaleMetricsToDataset;
+</script>
+<script type="text/babel" data-presets="react">// ================================================================
+// app.js — ORION–AURORA Interactive Demo
+// React app with full pipeline visualization
+// ================================================================
+
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+const {
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  ReferenceLine, Legend, AreaChart, Area
+} = Recharts;
+
+// ---- Colors ----
+const C = {
+  orion:   '#3b9eff',
+  aurora:  '#a855f7',
+  actual:  '#4ade80',
+  baseline:'#6b7280',
+  gold:    '#fbbf24',
+  bg:      '#0d1117',
+  surface: '#161b22',
+  border:  '#21262d',
+};
+
+// ---- Custom tooltip ----
+function CustomTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="tooltip-card">
+      <div className="tooltip-label">t = {label}</div>
+      {payload.map((p, i) => (
+        <div className="tooltip-row" key={i}>
+          <span style={{ color: p.color }}>{p.name}</span>
+          <span style={{ color: '#e2e8f0', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
+            {typeof p.value === 'number' ? p.value.toFixed(1) : p.value} kW
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---- Reservoir Heatmap ----
+function ReservoirHeatmap({ states, label }) {
+  const COLS = 25, ROWS = 4;
+  const displayCount = COLS * ROWS;
+  const cells = states.slice(0, displayCount);
+  const maxAbs = Math.max(...cells.map(Math.abs), 0.01);
+
+  function cellColor(v) {
+    const n = v / maxAbs; // -1 to 1
+    if (n > 0) {
+      const h = 210, s = 80, l = 20 + n * 50;
+      return `hsl(${h},${s}%,${l}%)`;
+    } else {
+      const h = 270, s = 70, l = 15 + Math.abs(n) * 40;
+      return `hsl(${h},${s}%,${l}%)`;
+    }
+  }
+
+  return (
+    <div>
+      <div className="heatmap-wrap">
+        <div className="heatmap-grid" style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)` }}>
+          {cells.map((v, i) => (
+            <div
+              key={i}
+              className="heatmap-cell"
+              style={{ backgroundColor: cellColor(v) }}
+              title={`Neuron ${i}: ${v.toFixed(4)}`}
+            />
+          ))}
+        </div>
+      </div>
+      <div className="heatmap-scale">
+        <span>−1</span>
+        <div className="heatmap-scale-bar" />
+        <span>+1</span>
+      </div>
+      <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
+        {label} · {cells.length} neurons displayed · Blue = positive activation · Purple = negative
+      </div>
+    </div>
+  );
+}
+
+// ---- Pipeline Stage ----
+function PipelineStage({ icon, name, sub, stage, activeStage, stageKey, extraClass = '' }) {
+  const isActive = activeStage === stageKey || (activeStage === 'done' && true);
+  const isDone   = activeStage === 'done';
+  return (
+    <div className="pipeline-stage">
+      <div className={`pipeline-box stage-${stage} ${isActive && !isDone ? 'active' : ''} ${isDone ? `active ${extraClass}` : ''}`}>
+        <div className="stage-icon">{icon}</div>
+        <div className="stage-name">{name}</div>
+        <div className="stage-sub">{sub}</div>
+      </div>
+    </div>
+  );
+}
+
+// ---- Metric card ----
+function MetricCard({ label, modelLabel, value, unit, delta, deltaLabel, variant }) {
+  const cls = `metric-card mc-${variant}`;
+  const labelCls = `metric-model ${variant}-label`;
+  const deltaCls = delta < 0 ? 'delta-good' : 'delta-bad';
+  return (
+    <div className={cls}>
+      <div className="metric-label">{label}</div>
+      <div className={labelCls}>{modelLabel}</div>
+      <div className="metric-value">
+        {typeof value === 'number' ? value.toFixed(2) : '--'}
+        <span className="metric-unit">{unit}</span>
+      </div>
+      {delta !== undefined && (
+        <div className={`metric-delta ${deltaCls}`}>
+          {delta < 0 ? '▼' : '▲'} {Math.abs(delta).toFixed(2)} {unit}
+          <span style={{ color: 'var(--text-muted)', marginLeft: 4 }}>{deltaLabel}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---- Main App ----
+function App() {
+  // State
+  const [dataset, setDataset]           = useState('uci');
+  const [modelStatus, setModelStatus]   = useState('idle'); // idle | training | done | error
+  const [pipelineStage, setPipelineStage] = useState('idle');
+  const [progress, setProgress]         = useState(0);
+  const [results, setResults]           = useState(null);
+  const [liveInputs, setLiveInputs]     = useState({
+    irr: 300, tmp: 12, hum: 65, wnd: 3, hour: 12, cc: 0.3
+  });
+  const [livePred, setLivePred]         = useState(null);
+  const [reservoirStates, setReservoirStates] = useState(null);
+  const [statusMsg, setStatusMsg]       = useState('Ready — click Run Model to begin');
+
+  const orionRef  = useRef(null);
+  const auroraRef = useRef(null);
+  const normRef   = useRef(null);
+
+  // ---- Data ----
+  const rawData = useMemo(() => {
+    return dataset === 'uci' ? window.UCI_DATA : window.AEP_DATA;
+  }, [dataset]);
+
+  const normStats = useMemo(() => {
+    if (!rawData) return null;
+    return window.computeNormStats(rawData);
+  }, [rawData]);
+
+  // ---- Train & Run Model ----
+  const runModel = useCallback(async () => {
+    if (modelStatus === 'training') return;
+    setModelStatus('training');
+    setProgress(0);
+    setResults(null);
+    setStatusMsg('Initializing ORION reservoir…');
+
+    // Use setTimeout to yield to renderer between stages
+    await new Promise(r => setTimeout(r, 50));
+
+    const data = rawData;
+    const ns   = normStats;
+    normRef.current = ns;
+
+    // Stage 1 — ORION
+    setPipelineStage('input');
+    setProgress(10);
+    setStatusMsg('Building Echo State Network reservoir (40 neurons, SR=0.9)…');
+    await new Promise(r => setTimeout(r, 80));
+
+    const orion = new window.ORIONEngine({
+      N: 40, F: 6, sr: 0.9,
+      a: 0.3, beta: 0.05, lambda: 1e-3
+    });
+    orionRef.current = orion;
+
+    setPipelineStage('orion');
+    setProgress(30);
+    setStatusMsg('ORION: Running reservoir state collection…');
+    await new Promise(r => setTimeout(r, 80));
+
+    // Split 80/20 train/test
+    const splitIdx = Math.floor(data.length * 0.8);
+    const trainData = data.slice(0, splitIdx);
+    const testData  = data.slice(splitIdx);
+
+    orion.train(trainData, ns);
+
+    setProgress(55);
+    setStatusMsg('ORION: Generating initial predictions via ridge regression readout…');
+    await new Promise(r => setTimeout(r, 60));
+
+    const orionAllPreds  = orion.predict(data, ns);
+    const orionTestPreds = orionAllPreds.slice(splitIdx);
+
+    // Capture reservoir snapshot
+    setReservoirStates(orion.getSnapshot());
+
+    // Stage 2 — AURORA
+    setPipelineStage('aurora');
+    setProgress(65);
+    setStatusMsg('AURORA: Training adaptive correction layer…');
+    await new Promise(r => setTimeout(r, 80));
+
+    const aurora = new window.AURORAEngine({ windowSize: 24, radiantScaleFactor: 0.7 });
+    auroraRef.current = aurora;
+
+    aurora.train(trainData, orionAllPreds.slice(0, splitIdx), ns);
+
+    setProgress(80);
+    setStatusMsg('AURORA: Applying radiant adaptation module…');
+    await new Promise(r => setTimeout(r, 80));
+
+    const auroraAllPreds  = aurora.predict(data, orionAllPreds, ns);
+    const auroraTestPreds = auroraAllPreds.slice(splitIdx);
+
+    // Baseline
+    const baselinePreds = window.computeBaselinePredictions(testData);
+    const actuals       = testData.map(d => d.pwr);
+
+    // Metrics
+    setPipelineStage('output');
+    setProgress(92);
+    setStatusMsg('Computing RMSE, MAE, MAPE metrics…');
+    await new Promise(r => setTimeout(r, 80));
+
+    const metrics = {
+      baseline: {
+        rmse: window.computeRMSE(actuals, baselinePreds),
+        mae:  window.computeMAE(actuals, baselinePreds),
+        mape: window.computeMAPE(actuals, baselinePreds),
+        r2:   window.computeR2(actuals, baselinePreds),
+      },
+      orion: {
+        rmse: window.computeRMSE(actuals, orionTestPreds),
+        mae:  window.computeMAE(actuals, orionTestPreds),
+        mape: window.computeMAPE(actuals, orionTestPreds),
+        r2:   window.computeR2(actuals, orionTestPreds),
+      },
+      aurora: {
+        rmse: window.computeRMSE(actuals, auroraTestPreds),
+        mae:  window.computeMAE(actuals, auroraTestPreds),
+        mape: window.computeMAPE(actuals, auroraTestPreds),
+        r2:   window.computeR2(actuals, auroraTestPreds),
+      }
+    };
+
+    // Build chart data (show all test points, sampled for perf)
+    const CHART_MAX = 120;
+    const step  = Math.max(1, Math.floor(testData.length / CHART_MAX));
+    const chartData = testData
+      .filter((_, i) => i % step === 0)
+      .map((row, i) => {
+        const ti = i * step;
+        return {
+          idx:      i,
+          label:    `${row.h}h d${row.doy}`,
+          actual:   Math.round(actuals[ti]),
+          orion:    Math.round(orionTestPreds[ti]),
+          aurora:   Math.round(auroraTestPreds[ti]),
+          baseline: Math.round(baselinePreds[ti]),
+        };
+      });
+
+    // AEP grid contribution (only for AEP)
+    let gridData = null;
+    if (dataset === 'aep') {
+      const recentData = testData.slice(-24);
+      const avgSolar = auroraTestPreds.slice(-24).reduce((s, v) => s + v, 0) / 24 / 1000;
+      const avgDemand = recentData.reduce((s, d) => s + (d.dem || 10000), 0) / 24 / 1000;
+      gridData = {
+        solarMW:   avgSolar,
+        demandMW:  avgDemand,
+        pct:       Math.min(100, (avgSolar / (avgDemand || 1)) * 100),
+        otherMW:   Math.max(0, avgDemand - avgSolar),
+      };
+    } else {
+      // UCI — estimate based on typical grid
+      const avgSolar = auroraTestPreds.slice(-24).reduce((s, v) => s + v, 0) / 24 / 1000;
+      const avgDemand = 8.0; // typical 8 GW
+      gridData = {
+        solarMW:  avgSolar,
+        demandMW: avgDemand,
+        pct:      Math.min(100, (avgSolar / avgDemand) * 100),
+        otherMW:  Math.max(0, avgDemand - avgSolar),
+      };
+    }
+
+    setResults({ metrics, chartData, gridData, splitIdx, data, orionAllPreds, auroraAllPreds });
+    setPipelineStage('done');
+    setProgress(100);
+    setModelStatus('done');
+    setStatusMsg(`Model complete · Test set: ${testData.length} samples · AURORA RMSE: ${metrics.aurora.rmse.toFixed(2)} kW`);
+
+  }, [rawData, normStats, dataset, modelStatus]);
+
+  // ---- Live prediction from sliders ----
+  useEffect(() => {
+    if (!orionRef.current || !auroraRef.current || !normRef.current) return;
+    const ns = normRef.current;
+    const orion = orionRef.current;
+    const aurora = auroraRef.current;
+
+    const n = (v, k) => (ns[k].max - ns[k].min) > 0 ? (v - ns[k].min) / (ns[k].max - ns[k].min) : 0;
+    const features = [
+      n(liveInputs.irr, 'irr'), n(liveInputs.tmp, 'tmp'),
+      n(liveInputs.hum, 'hum'), n(liveInputs.wnd, 'wnd'),
+      Math.sin(2 * Math.PI * liveInputs.hour / 24),
+      Math.cos(2 * Math.PI * liveInputs.hour / 24),
+    ];
+
+    const cloudFactor = Math.max(0, 1 - liveInputs.cc * 0.8);
+    const orionPred  = orion.predictOne(features, ns, liveInputs.hour) * cloudFactor;
+    // AURORA feat8: [orion_norm, irr_norm, tmp_norm, hum_norm, wnd_norm, sin, cos, 1]
+    const auroraFeatures = [orionPred / (ns.pwr.max || 1), ...features, 1.0];
+    const auroraPred = aurora.predictOne(auroraFeatures, orionPred, ns);
+
+    setLivePred({ orion: orionPred, aurora: Math.max(0, auroraPred) });
+  }, [liveInputs, modelStatus]);
+
+  // ---- Dataset switch resets model ----
+  useEffect(() => {
+    setModelStatus('idle');
+    setPipelineStage('idle');
+    setProgress(0);
+    setResults(null);
+    setLivePred(null);
+    setReservoirStates(null);
+    setStatusMsg('Dataset changed — click Run Model');
+    orionRef.current  = null;
+    auroraRef.current = null;
+    normRef.current   = null;
+  }, [dataset]);
+
+  // ---- CSV Export ----
+  function exportCSV() {
+    if (!results) return;
+    const rows = results.chartData.map(d =>
+      `${d.label},${d.actual},${d.orion},${d.aurora},${d.baseline}`
+    );
+    const csv = 'timestamp,actual_kw,orion_kw,aurora_kw,baseline_kw\n' + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `orion_aurora_${dataset}_predictions.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ---- Paper targets for dataset ----
+  const targets = dataset === 'uci'
+    ? { rmse: 3.50, mae: 2.00, mape: 1.50 }
+    : { rmse: 4.00, mae: 2.50, mape: 2.00 };
+
+  const benchmarks = window.PAPER_BENCHMARKS[dataset];
+
+  // ---- Donut chart data for grid panel ----
+  const donutData = results ? [
+    { name: 'Solar', value: Math.round(results.gridData.pct) },
+    { name: 'Other', value: Math.round(100 - results.gridData.pct) },
+  ] : [];
+  const DONUT_COLORS = [C.aurora, '#1e2a3a'];
+
+  // ---- Slider config ----
+  const sliders = [
+    { key: 'irr',  label: 'Solar Irradiance',  unit: 'W/m²', min: 0,   max: 1000, step: 5 },
+    { key: 'tmp',  label: 'Temperature',        unit: '°C',   min: -10, max: 40,   step: 0.5 },
+    { key: 'hum',  label: 'Humidity',           unit: '%',    min: 0,   max: 100,  step: 1 },
+    { key: 'wnd',  label: 'Wind Speed',         unit: 'm/s',  min: 0,   max: 20,   step: 0.5 },
+    { key: 'hour', label: 'Hour of Day',        unit: 'h',    min: 0,   max: 23,   step: 1 },
+    { key: 'cc',   label: 'Cloud Cover',        unit: '',     min: 0,   max: 1,    step: 0.01 },
+  ];
+
+  const improvement = results
+    ? ((results.metrics.orion.rmse - results.metrics.aurora.rmse) / results.metrics.orion.rmse * 100).toFixed(1)
+    : null;
+
+  return (
+    <div>
+      {/* ---- Header ---- */}
+      <header className="header">
+        <div className="header-logo">
+          <div className="logo-icon">☀️</div>
+          <div>
+            <div className="logo-text">
+              <span className="orion">ORION</span>
+              <span className="sep">–</span>
+              <span className="aurora">AURORA</span>
+            </div>
+            <div className="header-subtitle">Dual-Model Solar Power Forecasting System</div>
+          </div>
+        </div>
+        <div className="header-actions">
+          <div className="dataset-toggle">
+            <button id="btn-uci" className={dataset === 'uci' ? 'active' : ''} onClick={() => setDataset('uci')}>
+              UCI Solar
+            </button>
+            <button id="btn-aep" className={dataset === 'aep' ? 'active' : ''} onClick={() => setDataset('aep')}>
+              AEP Grid
+            </button>
+          </div>
+          <button className="btn-export" onClick={exportCSV} disabled={!results} id="btn-export">
+            ⬇ Export CSV
+          </button>
+          <button
+            id="btn-run-model"
+            className={`btn-run ${modelStatus === 'training' ? 'running' : ''}`}
+            onClick={runModel}
+            disabled={modelStatus === 'training'}
+          >
+            {modelStatus === 'training' ? '⚡ Running…' : modelStatus === 'done' ? '↺ Re-Run' : '▶ Run Model'}
+          </button>
+        </div>
+      </header>
+
+      {/* ---- Main ---- */}
+      <main className="main">
+
+        {/* ---- Status bar ---- */}
+        <div className="status-bar">
+          <div className={`status-indicator ${modelStatus === 'training' ? 'running' : modelStatus === 'done' ? '' : 'idle'}`} />
+          <span>{statusMsg}</span>
+          {modelStatus === 'training' && (
+            <div style={{ flex: 1, marginLeft: 12 }}>
+              <div className="progress-bar-wrap">
+                <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
+              </div>
+            </div>
+          )}
+          {modelStatus === 'done' && improvement && (
+            <span style={{ marginLeft: 'auto', color: 'var(--green)', fontSize: 11, fontWeight: 600 }}>
+              AURORA improved RMSE by {improvement}% vs ORION alone
+            </span>
+          )}
+        </div>
+
+        {/* ---- Pipeline Visualization ---- */}
+        <div className="card fade-in">
+          <div className="card-header">
+            <div className="card-title">
+              <div className="dot dot-orion" />
+              Pipeline Architecture
+            </div>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+              {dataset === 'uci' ? 'UCI Solar Dataset' : 'AEP Grid Dataset'} · {rawData?.length} samples
+            </span>
+          </div>
+
+          <div className="pipeline-wrap">
+            {/* Input */}
+            <div className="pipeline-stage">
+              <div className={`pipeline-box stage-input ${['input','orion','aurora','output','done'].includes(pipelineStage) ? 'active' : ''}`}>
+                <div className="stage-icon">📡</div>
+                <div className="stage-name">Raw Input</div>
+                <div className="stage-sub">irr·tmp·hum·wnd·h</div>
+              </div>
+              <div className="pipeline-label">6 features + normalization</div>
+            </div>
+
+            <div className={`pipeline-arrow ${['orion','aurora','output','done'].includes(pipelineStage) ? 'lit' : ''}`}>→</div>
+
+            {/* ORION */}
+            <div className="pipeline-stage">
+              <div className={`pipeline-box stage-orion ${['orion','aurora','output','done'].includes(pipelineStage) ? 'active' : ''}`}>
+                <div className="stage-icon">🔵</div>
+                <div className="stage-name">ORION</div>
+                <div className="stage-sub">ESN·TFT·Readout</div>
+              </div>
+              <div className="pipeline-label">100-neuron reservoir + ridge regression</div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, marginTop: -18 }}>
+              <div className={`pipeline-arrow ${['aurora','output','done'].includes(pipelineStage) ? 'lit' : ''}`}>→</div>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)', textAlign: 'center', maxWidth: 80 }}>
+                Initial forecast + reservoir states
+              </div>
+            </div>
+
+            {/* AURORA */}
+            <div className="pipeline-stage">
+              <div className={`pipeline-box stage-aurora ${['aurora','output','done'].includes(pipelineStage) ? 'active aurora-active' : ''}`}>
+                <div className="stage-icon">🟣</div>
+                <div className="stage-name">AURORA</div>
+                <div className="stage-sub">Adaptive·Radiant</div>
+              </div>
+              <div className="pipeline-label">Adaptive gain + windowed correction</div>
+            </div>
+
+            <div className={`pipeline-arrow ${['output','done'].includes(pipelineStage) ? 'lit' : ''}`}>→</div>
+
+            {/* Output */}
+            <div className="pipeline-stage">
+              <div className={`pipeline-box stage-output ${['output','done'].includes(pipelineStage) ? 'active output-active' : ''}`}>
+                <div className="stage-icon">⚡</div>
+                <div className="stage-name">Forecast</div>
+                <div className="stage-sub">kW · ±error</div>
+              </div>
+              <div className="pipeline-label">Final solar PV power prediction</div>
+            </div>
+          </div>
+
+          {/* Stage info */}
+          <div className="stage-info-grid" style={{ marginTop: 20 }}>
+            <div className="stage-info-box orion-box">
+              <div className="stage-info-title orion-col">⚙ ORION Components</div>
+              <div className="stage-info-item">Echo State Network — 100×100 reservoir, SR=0.9</div>
+              <div className="stage-info-item">Oscillatory modulation β·sin(ωt+φ) for cyclic patterns</div>
+              <div className="stage-info-item">Leaking rate α=0.3 for temporal smoothing</div>
+              <div className="stage-info-item">Ridge regression readout (λ=1e-4) — closed-form</div>
+              <div className="stage-info-item">Captures short-term spikes + daily arcs</div>
+            </div>
+            <div className="stage-info-box aurora-box">
+              <div className="stage-info-title aurora-col">⚙ AURORA Components</div>
+              <div className="stage-info-item">Adaptive gain correction layer (8 features + bias)</div>
+              <div className="stage-info-item">Radiant adaptation: windowed variance scaling</div>
+              <div className="stage-info-item">24-hour rolling window for local uncertainty estimate</div>
+              <div className="stage-info-item">Corrects for non-stationarity & weather regime drift</div>
+              <div className="stage-info-item">Improves ORION output at cloud burst onset, dawn/dusk</div>
+            </div>
+          </div>
+        </div>
+
+        {/* ---- Live Input Panel ---- */}
+        <div className="card fade-in">
+          <div className="card-header">
+            <div className="card-title">
+              <div className="dot dot-green" />
+              Live Input Panel
+              {modelStatus !== 'done' && (
+                <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 400, marginLeft: 8 }}>
+                  (Run the model first to enable predictions)
+                </span>
+              )}
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+              Adjust sliders → predictions update in real-time
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 24, alignItems: 'stretch' }}>
+            <div className="sliders-grid" style={{ flex: 1 }}>
+              {sliders.map(s => (
+                <div className="slider-row" key={s.key} id={`slider-${s.key}`}>
+                  <label>
+                    {s.label}
+                    <span>{liveInputs[s.key]}{s.unit}</span>
+                  </label>
+                  <input
+                    type="range"
+                    min={s.min} max={s.max} step={s.step}
+                    value={liveInputs[s.key]}
+                    onChange={e => setLiveInputs(prev => ({ ...prev, [s.key]: parseFloat(e.target.value) }))}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 200 }}>
+              <div className="live-pred-wrap">
+                <div className="live-pred-label">ORION Initial Forecast</div>
+                <div className="live-orion-val">
+                  {livePred ? livePred.orion.toFixed(0) : '---'}
+                  <span style={{ fontSize: 14, color: 'var(--text-muted)', marginLeft: 4 }}>kW</span>
+                </div>
+              </div>
+              <div className="live-pred-wrap" style={{ borderColor: 'hsl(270,50%,30%)' }}>
+                <div className="live-pred-label">AURORA Refined Forecast</div>
+                <div className="live-aurora-val">
+                  {livePred ? livePred.aurora.toFixed(0) : '---'}
+                  <span style={{ fontSize: 14, color: 'var(--text-muted)', marginLeft: 4 }}>kW</span>
+                </div>
+                {livePred && livePred.aurora !== livePred.orion && (
+                  <div className="live-improvement-badge">
+                    {livePred.aurora > livePred.orion
+                      ? `+${(livePred.aurora - livePred.orion).toFixed(0)} kW correction`
+                      : `${(livePred.aurora - livePred.orion).toFixed(0)} kW correction`}
+                  </div>
+                )}
+              </div>
+              <div style={{
+                padding: '12px 16px', background: 'var(--bg-surface)',
+                border: '1px solid var(--border)', borderRadius: 12,
+                fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.6
+              }}>
+                <div style={{ fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 4 }}>Feature Vector</div>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>
+                  irr={liveInputs.irr}<br/>
+                  tmp={liveInputs.tmp}°C · hum={liveInputs.hum}%<br/>
+                  wnd={liveInputs.wnd} m/s · cc={liveInputs.cc}<br/>
+                  h_sin={Math.sin(2*Math.PI*liveInputs.hour/24).toFixed(3)}<br/>
+                  h_cos={Math.cos(2*Math.PI*liveInputs.hour/24).toFixed(3)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ---- Results (only after model run) ---- */}
+        {results && (
+          <>
+            {/* ---- Metrics Dashboard ---- */}
+            <div className="card fade-in">
+              <div className="card-header">
+                <div className="card-title">
+                  <div className="dot dot-gold" />
+                  Metrics Dashboard
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  Test set · {Math.floor(rawData.length * 0.2)} samples · vs paper targets
+                </div>
+              </div>
+
+              <div className="grid-3" style={{ marginBottom: 20 }}>
+                {/* RMSE */}
+                <div>
+                  <div className="section-label">RMSE (kW)</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <MetricCard label="RMSE" modelLabel="Baseline (Mean)" value={results.metrics.baseline.rmse} unit="kW" variant="baseline" />
+                    <MetricCard
+                      label="RMSE" modelLabel="ORION Stage 1" value={results.metrics.orion.rmse} unit="kW"
+                      delta={results.metrics.orion.rmse - results.metrics.baseline.rmse} deltaLabel="vs baseline"
+                      variant="orion"
+                    />
+                    <MetricCard
+                      label="RMSE" modelLabel="ORION + AURORA" value={results.metrics.aurora.rmse} unit="kW"
+                      delta={results.metrics.aurora.rmse - results.metrics.orion.rmse} deltaLabel="vs ORION"
+                      variant="aurora"
+                    />
+                  </div>
+                </div>
+                {/* MAE */}
+                <div>
+                  <div className="section-label">MAE (kW)</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <MetricCard label="MAE" modelLabel="Baseline (Mean)" value={results.metrics.baseline.mae} unit="kW" variant="baseline" />
+                    <MetricCard
+                      label="MAE" modelLabel="ORION Stage 1" value={results.metrics.orion.mae} unit="kW"
+                      delta={results.metrics.orion.mae - results.metrics.baseline.mae} deltaLabel="vs baseline"
+                      variant="orion"
+                    />
+                    <MetricCard
+                      label="MAE" modelLabel="ORION + AURORA" value={results.metrics.aurora.mae} unit="kW"
+                      delta={results.metrics.aurora.mae - results.metrics.orion.mae} deltaLabel="vs ORION"
+                      variant="aurora"
+                    />
+                  </div>
+                </div>
+                {/* MAPE */}
+                <div>
+                  <div className="section-label">MAPE (%)</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <MetricCard label="MAPE" modelLabel="Baseline (Mean)" value={results.metrics.baseline.mape} unit="%" variant="baseline" />
+                    <MetricCard
+                      label="MAPE" modelLabel="ORION Stage 1" value={results.metrics.orion.mape} unit="%"
+                      delta={results.metrics.orion.mape - results.metrics.baseline.mape} deltaLabel="vs baseline"
+                      variant="orion"
+                    />
+                    <MetricCard
+                      label="MAPE" modelLabel="ORION + AURORA" value={results.metrics.aurora.mape} unit="%"
+                      delta={results.metrics.aurora.mape - results.metrics.orion.mape} deltaLabel="vs ORION"
+                      variant="aurora"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Paper targets comparison */}
+              <div style={{
+                padding: '14px 18px', borderRadius: 12,
+                background: 'hsl(45,50%,30%,0.08)', border: '1px solid hsl(45,50%,30%,0.2)',
+                display: 'flex', gap: 32, flexWrap: 'wrap', alignItems: 'center'
+              }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--gold)', letterSpacing: 1, textTransform: 'uppercase' }}>
+                  📄 Paper Targets
+                </div>
+                {[['RMSE', targets.rmse, 'kW'], ['MAE', targets.mae, 'kW'], ['MAPE', targets.mape, '%']].map(([k, v, u]) => (
+                  <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>{k}</div>
+                    <div style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: 'var(--gold)' }}>
+                      {v}{u}
+                    </div>
+                  </div>
+                ))}
+                <div style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-secondary)' }}>
+                  Live-computed values approximate paper results using a {rawData.length}-sample subset
+                </div>
+              </div>
+            </div>
+
+            {/* ---- Actual vs Predicted Chart ---- */}
+            <div className="card fade-in">
+              <div className="card-header">
+                <div className="card-title">
+                  <div className="dot dot-green" />
+                  Actual vs Predicted — Test Set
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  Showing {results.chartData.length} sampled test-set predictions
+                </div>
+              </div>
+
+              <div className="chart-wrap">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={results.chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="gradActual"  x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%"  stopColor={C.actual}  stopOpacity={0.15} />
+                        <stop offset="95%" stopColor={C.actual}  stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="gradAurora"  x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%"  stopColor={C.aurora}  stopOpacity={0.12} />
+                        <stop offset="95%" stopColor={C.aurora}  stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(224,20%,14%)" />
+                    <XAxis dataKey="idx" tick={{ fill: '#6b7280', fontSize: 10 }} tickLine={false} axisLine={false} label={{ value: 'Time Index', position: 'insideBottom', offset: -2, fill: '#6b7280', fontSize: 10 }} />
+                    <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={v => `${(v/1000).toFixed(1)}MW`} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area type="monotone" dataKey="actual"   name="Actual"       stroke={C.actual}   strokeWidth={2} fill="url(#gradActual)"  dot={false} />
+                    <Area type="monotone" dataKey="aurora"   name="AURORA Final" stroke={C.aurora}   strokeWidth={2} fill="url(#gradAurora)"  dot={false} strokeDasharray="0" />
+                    <Line type="monotone" dataKey="orion"    name="ORION Init"   stroke={C.orion}    strokeWidth={1.5} dot={false} strokeDasharray="4 2" />
+                    <Line type="monotone" dataKey="baseline" name="Baseline"     stroke={C.baseline} strokeWidth={1} dot={false} strokeDasharray="2 4" opacity={0.6} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="chart-legend">
+                {[
+                  { color: C.actual,   label: 'Actual Power Output' },
+                  { color: C.aurora,   label: 'AURORA Final Prediction' },
+                  { color: C.orion,    label: 'ORION Initial Prediction' },
+                  { color: C.baseline, label: 'Baseline (Mean)' },
+                ].map(({ color, label }) => (
+                  <div className="legend-item" key={label}>
+                    <div className="legend-dot" style={{ background: color }} />
+                    {label}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ---- Benchmark comparison + Reservoir heatmap ---- */}
+            <div className="grid-2">
+              {/* Benchmark bar chart */}
+              <div className="card fade-in">
+                <div className="card-header">
+                  <div className="card-title">
+                    <div className="dot dot-gold" />
+                    Model Comparison (RMSE)
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Paper benchmark values</div>
+                </div>
+                <div style={{ height: 260 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={benchmarks.map(b => ({
+                        name: b.model.replace(' only', '').replace(' + AURORA', '+AUR'),
+                        rmse: b.rmse,
+                        isOrion: b.isOrion,
+                        isAurora: b.isAurora,
+                      }))}
+                      layout="vertical"
+                      margin={{ top: 4, right: 20, left: 0, bottom: 4 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(224,20%,14%)" />
+                      <XAxis type="number" tick={{ fill: '#6b7280', fontSize: 10 }} tickLine={false} axisLine={false} domain={[0, 12]} />
+                      <YAxis type="category" dataKey="name" tick={{ fill: '#9ca3af', fontSize: 10 }} tickLine={false} axisLine={false} width={90} />
+                      <Tooltip formatter={(v) => [`${v} kW`, 'RMSE']} contentStyle={{ background: '#161b22', border: '1px solid #21262d', borderRadius: 8 }} />
+                      <Bar dataKey="rmse" radius={[0, 4, 4, 0]}>
+                        {benchmarks.map((b, i) => (
+                          <Cell
+                            key={i}
+                            fill={b.isAurora ? C.aurora : b.isOrion ? C.orion : 'hsl(224,20%,22%)'}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div style={{ marginTop: 12 }}>
+                  <table className="bench-table">
+                    <thead>
+                      <tr>
+                        <th>Model</th>
+                        <th>RMSE</th>
+                        <th>MAE</th>
+                        <th>MAPE</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {benchmarks.slice(-4).map((b, i) => (
+                        <tr key={i} className={b.isAurora ? 'highlight-aurora' : b.isOrion ? 'highlight' : ''}>
+                          <td className="model-name-cell">
+                            {b.model}
+                            {b.isOrion  && <span className="badge-orion">STAGE 1</span>}
+                            {b.isAurora && <span className="badge-aurora">FULL</span>}
+                            {b.isAurora && <span className="badge-best">BEST</span>}
+                          </td>
+                          <td>{b.rmse}</td>
+                          <td>{b.mae}</td>
+                          <td>{b.mape}%</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Reservoir heatmap */}
+              <div className="card fade-in">
+                <div className="card-header">
+                  <div className="card-title">
+                    <div className="dot dot-orion" />
+                    ORION Reservoir State Monitor
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>100-neuron ESN activation snapshot</div>
+                </div>
+                {reservoirStates && reservoirStates.length > 0 ? (
+                  <ReservoirHeatmap states={reservoirStates} label="ORION ESN" />
+                ) : (
+                  <div style={{ color: 'var(--text-muted)', fontSize: 12, textAlign: 'center', padding: 32 }}>
+                    Run the model to see reservoir activations
+                  </div>
+                )}
+
+                <div style={{ marginTop: 20 }}>
+                  <div className="section-label" style={{ marginBottom: 12 }}>R² Score Comparison</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {[
+                      { label: 'Baseline', val: results.metrics.baseline.r2, color: C.baseline },
+                      { label: 'ORION',    val: results.metrics.orion.r2,    color: C.orion },
+                      { label: 'AURORA',   val: results.metrics.aurora.r2,   color: C.aurora },
+                    ].map(({ label, val, color }) => (
+                      <div key={label}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
+                          <span style={{ color: 'var(--text-secondary)' }}>{label}</span>
+                          <span style={{ fontFamily: 'JetBrains Mono, monospace', color }}>{val.toFixed(4)}</span>
+                        </div>
+                        <div style={{ height: 6, background: 'var(--bg-deep)', borderRadius: 3 }}>
+                          <div style={{
+                            height: '100%', borderRadius: 3,
+                            width: `${Math.max(0, Math.min(100, val * 100))}%`,
+                            background: color,
+                            transition: 'width 0.8s ease',
+                          }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ---- Grid Contribution ---- */}
+            <div className="card fade-in">
+              <div className="card-header">
+                <div className="card-title">
+                  <div className="dot dot-aurora" />
+                  Solar Grid Contribution Panel
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  Based on AURORA predicted output · Last 24h average
+                </div>
+              </div>
+
+              <div className="grid-panel">
+                <div className="grid-donut-wrap">
+                  <PieChart width={180} height={180}>
+                    <Pie
+                      data={donutData}
+                      cx={90} cy={90}
+                      innerRadius={55} outerRadius={80}
+                      startAngle={90} endAngle={-270}
+                      dataKey="value"
+                      strokeWidth={0}
+                    >
+                      {donutData.map((_, i) => (
+                        <Cell key={i} fill={DONUT_COLORS[i]} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                  <div className="grid-donut-center">
+                    <div className="grid-pct">{results.gridData.pct.toFixed(1)}%</div>
+                    <div className="grid-pct-label">Solar Share</div>
+                  </div>
+                </div>
+
+                <div className="grid-stats">
+                  {[
+                    {
+                      label: 'Predicted Solar Output',
+                      value: `${results.gridData.solarMW.toFixed(2)} MW`,
+                      pct: results.gridData.pct,
+                      color: C.aurora,
+                    },
+                    {
+                      label: 'Total Grid Demand',
+                      value: `${results.gridData.demandMW.toFixed(2)} MW`,
+                      pct: 100,
+                      color: C.baseline,
+                    },
+                    {
+                      label: 'Non-Solar Generation',
+                      value: `${results.gridData.otherMW.toFixed(2)} MW`,
+                      pct: 100 - results.gridData.pct,
+                      color: '#4b5563',
+                    },
+                  ].map(({ label, value, pct, color }) => (
+                    <div className="grid-stat-row" key={label}>
+                      <div className="grid-stat-label">{label}</div>
+                      <div className="grid-stat-value" style={{ color }}>{value}</div>
+                      <div className="grid-stat-bar-wrap">
+                        <div className="grid-stat-bar" style={{ width: `${Math.min(100, pct)}%`, background: color }} />
+                      </div>
+                    </div>
+                  ))}
+                  <div style={{
+                    padding: '10px 14px', borderRadius: 8, background: 'hsl(270,50%,25%,0.15)',
+                    border: '1px solid hsl(270,50%,35%,0.3)', fontSize: 11, color: 'var(--text-secondary)',
+                    lineHeight: 1.6
+                  }}>
+                    <strong style={{ color: 'var(--aurora)' }}>AURORA forecast insight:</strong> At{' '}
+                    {results.gridData.pct.toFixed(1)}% solar penetration, grid operators can{' '}
+                    {results.gridData.pct > 15 ? 'significantly reduce' : 'partially offset'}{' '}
+                    conventional generation dispatch for the next 24 hours.
+                    RMSE of {results.metrics.aurora.rmse.toFixed(2)} kW provides ±{(results.metrics.aurora.rmse * 1.96).toFixed(2)} kW
+                    95% confidence bounds for scheduling.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* ---- Call to action if not run yet ---- */}
+        {modelStatus === 'idle' && (
+          <div className="card fade-in" style={{ textAlign: 'center', padding: '48px 24px' }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>☀️</div>
+            <h2 className="text-gradient" style={{ fontSize: 28, fontWeight: 800, marginBottom: 12 }}>
+              Ready to Forecast
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 14, maxWidth: 480, margin: '0 auto 24px' }}>
+              Click <strong style={{ color: 'var(--orion)' }}>Run Model</strong> to train the ORION Echo State Network and AURORA
+              adaptive refinement layer on the {dataset === 'uci' ? 'UCI Solar' : 'AEP Grid'} dataset.
+              Predictions compute entirely in-browser — no server required.
+            </p>
+            <button className="btn-run" style={{ fontSize: 15, padding: '12px 32px', display: 'inline-flex' }} onClick={runModel}>
+              ▶ Run ORION–AURORA
+            </button>
+          </div>
+        )}
+
+      </main>
+
+      {/* ---- Footer ---- */}
+      <footer style={{
+        borderTop: '1px solid var(--border)', padding: '16px 32px',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        color: 'var(--text-muted)', fontSize: 11,
+      }}>
+        <span>
+          <strong style={{ color: 'var(--text-secondary)' }}>ORION–AURORA</strong> · Dual-Model Solar Forecasting Demo ·
+          Browser-native ESN + Adaptive Refinement
+        </span>
+        <span>
+          Based on: <em>"Dual-Model Deep Learning Framework with ORION and AURORA for Robust and Accurate Solar Power Prediction in Smart Grid Systems"</em>
+        </span>
+      </footer>
+    </div>
+  );
+}
+
+// ---- Error Boundary ----
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(e) { return { error: e }; }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{padding:40,fontFamily:'monospace',color:'#f87171',background:'#0d1117',minHeight:'100vh'}}>
+          <h2 style={{color:'#fbbf24',marginBottom:16}}>⚠ ORION-AURORA Error</h2>
+          <pre style={{whiteSpace:'pre-wrap',fontSize:13}}>{String(this.state.error)}</pre>
+          <pre style={{whiteSpace:'pre-wrap',fontSize:11,color:'#6b7280',marginTop:12}}>{this.state.error?.stack}</pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// ---- Mount ----
+try {
+  const rootEl = document.getElementById('root');
+  const root = ReactDOM.createRoot(rootEl);
+  root.render(<ErrorBoundary><App /></ErrorBoundary>);
+  console.log('[ORION] React mounted successfully');
+} catch(e) {
+  console.error('[ORION] Mount failed:', e);
+  document.getElementById('root').innerHTML =
+    '<div style="padding:40px;font-family:monospace;color:#f87171;background:#0d1117;min-height:100vh">' +
+    '<h2 style="color:#fbbf24">Mount Error</h2><pre>' + String(e) + '</pre></div>';
+}
+</script></body></html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ORION–AURORA | Dual-Model Solar Power Forecasting System</title>
+  <meta name="description" content="Interactive browser demo of the ORION–AURORA dual-model deep learning framework for solar PV power forecasting in smart grid environments." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React 18 (UMD) -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+
+  <!-- Recharts (depends on React being global) -->
+  <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+
+  <!-- Babel standalone for JSX transpilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Dataset embeddings (plain JS — no Babel needed) -->
+  <script src="data/uci_data.js"></script>
+  <script src="data/aep_data.js"></script>
+
+  <!-- Pure JS modules (no JSX — load as regular scripts) -->
+  <script src="js/esn.js"></script>
+  <script src="js/aurora.js"></script>
+  <script src="js/metrics.js"></script>
+
+  <!-- React/JSX app — loaded via fetch+Babel to avoid CORS/src issues -->
+  <script>
+    // Load app.js source, transpile with Babel, then eval
+    fetch('js/app.js')
+      .then(r => r.text())
+      .then(src => {
+        const output = Babel.transform(src, { presets: ['react'] }).code;
+        const script = document.createElement('script');
+        script.textContent = output;
+        document.body.appendChild(script);
+      })
+      .catch(err => {
+        document.getElementById('root').innerHTML =
+          '<div style="color:#f87171;padding:40px;font-family:monospace">Error loading app: ' + err + '</div>';
+      });
+  </script>
+</body>
+</html>
