@@ -17,7 +17,10 @@
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 
-  <!-- Recharts (depends on React being global) -->
+  <!-- PropTypes (required by Recharts UMD build) -->
+  <script src="https://unpkg.com/prop-types@15.8.1/prop-types.js" crossorigin></script>
+
+  <!-- Recharts (depends on React and PropTypes being global) -->
   <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
 
   <!-- Babel standalone for JSX transpilation -->
