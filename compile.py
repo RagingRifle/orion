@@ -65,8 +65,8 @@ def load_and_preprocess_aep(csv_path):
             tmp = float(row['temperature_c'])
             hum = float(row['humidity_pct'])
             wnd = float(row['wind_speed_ms'])
-            pwr = float(row['power_output_kw'])
-            dem = float(row.get('grid_demand_mw', 4200)) # default fallback if missing
+            pwr = float(row['solar_generation_kw'])
+            dem = float(row.get('grid_demand_mw', row.get('demand_mw', 4200))) # default fallback if missing
             h   = int(row['hour_of_day'])
             doy = int(row['day_of_year'])
             
